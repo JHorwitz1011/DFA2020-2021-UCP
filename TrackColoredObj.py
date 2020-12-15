@@ -25,7 +25,7 @@ if not camera.isOpened():
     print("Camera could not be referenced")
     exit(0)
 
-
+#Frame processing
 while True:
     ret, frame = camera.read()
 
