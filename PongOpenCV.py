@@ -11,11 +11,18 @@ FRAME_WIDTH = 800
 FRAME_HEIGHT = 800
 RADIUS = 25
 FRAMES_NEEDED = 5
-frame_count = 0
+frame_count_up = 0
+frame_count_down = 0
 
-#Currently set to a green object
-colorLower = (29,86,6)
-colorUpper = (64,255,255)
+#Currently set to a green object for up and blue for down
+#(36, 202, 59, 71, 255, 255)    # Green
+#(18, 0, 196, 36, 255, 255)  # Yellow
+#(89, 0, 0, 125, 255, 255)  # Blue
+#(0, 100, 80, 10, 255, 255)   # Red
+colorUpLower = (36,202,59)
+colorUpUpper = (71,255,255)
+colorDownLower = (0,100,80)
+colorDownUpper = (10,255,255)
 
 camera = cv.VideoCapture(0)
 camera.set(cv.CAP_PROP_FRAME_WIDTH, FRAME_WIDTH)
@@ -107,7 +114,7 @@ def paddle_b_down():
     paddle_b.sety(y)
 
 
-def readFrame():
+def detectColor(colorLow, colorUpper):
     ret, frame = camera.read()
 
     if ret:
@@ -116,7 +123,7 @@ def readFrame():
         blurred = cv.GaussianBlur(frame, (11, 11), 0)
         hsv = cv.cvtColor(blurred, cv.COLOR_BGR2HSV)
 
-        mask = cv.inRange(hsv, colorLower, colorUpper)
+        mask = cv.inRange(hsv, colorLow, colorUpper)
         mask = cv.erode(mask, None, iterations=2)
         mask = cv.dilate(mask, None, iterations=2)
 
@@ -138,8 +145,45 @@ def readFrame():
                 cv.circle(frame, (int(x), int(y)),
                           int(radius), (0, 255, 255), 2)
                 cv.circle(frame, center, 5, (0, 0, 255), -1)
-                global frame_count
-                frame_count = frame_count + 1
+                return 1
+
+        frame = cv.flip(frame, 1)
+        cv.imshow('Frame', frame)
+        return 0
+
+def readFrame():
+    ret, frame = camera.read()
+
+    if ret:
+        # Process frame @ lower quality level
+        frame = imutils.resize(frame, width=600)
+        blurred = cv.GaussianBlur(frame, (11, 11), 0)
+        hsv = cv.cvtColor(blurred, cv.COLOR_BGR2HSV)
+
+        mask = cv.inRange(hsv, colorUpLower, colorUpUpper)
+        mask = cv.erode(mask, None, iterations=2)
+        mask = cv.dilate(mask, None, iterations=2)
+
+        cv.imshow('Mask', mask)
+
+        # Pull contours to draw
+        contours = cv.findContours(
+            mask.copy(), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+        contours = imutils.grab_contours(contours)
+        center = None
+
+        if len(contours) > 0:
+            maxC = max(contours, key=cv.contourArea)
+            ((x, y), radius) = cv.minEnclosingCircle(maxC)
+            M = cv.moments(maxC)
+            center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+
+            if radius > RADIUS:
+                cv.circle(frame, (int(x), int(y)),
+                          int(radius), (0, 255, 255), 2)
+                cv.circle(frame, center, 5, (0, 0, 255), -1)
+                global frame_count_up
+                frame_count_up = frame_count_up + 1
 
         frame = cv.flip(frame, 1)
         cv.imshow('Frame', frame)
@@ -157,9 +201,12 @@ wn.onkeypress(paddle_b_down, "Down")
 while True:
     wn.update()
     readFrame()
-    if frame_count > FRAMES_NEEDED:
+    frame_count_up = frame_count_up + detectColor(colorUpLower,colorUpUpper)
+    #frame_count_down = frame_count_down + detectColor(colorDownLower,colorDownUpper)
+
+    if frame_count_up > FRAMES_NEEDED:
         paddle_a_up()
-        frame_count = 0
+        frame_count_up = 0
 
 
     wn.update()
@@ -206,6 +253,7 @@ while True:
             ball.setx(-340)
             ball.dx *= -1
             #os.system("afplay bounce.wav&")
+
 
 
 cv.destroyAllWindows()
