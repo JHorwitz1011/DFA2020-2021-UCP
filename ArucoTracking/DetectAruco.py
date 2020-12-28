@@ -92,49 +92,6 @@ while True:
             # draw the ArUco marker ID on the frame
             cv2.putText(frame, str(markerID), (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-            ## Centroid storing
-            # create trackable object to store centroids
-            to = trackableObjects.get(markerID, None)
-            if to is None:
-                to = TrackableObject(markerID, centroid)
-            else:
-                # the difference between the y-coordinate of the *current*
-                # centroid and the mean of *previous* centroids will tell
-                # us in which direction the object is moving (negative for
-                # 'up' and positive for 'down')
-                y = [c[1] for c in to.centroids]
-                direction = centroid[1] - np.mean(y)
-                to.centroids.append(centroid)
-                # check to see if the object has been counted or not
-                if not to.counted:
-                    # if the direction is negative (indicating the object
-                    # is moving up) AND the centroid is above the center
-                    # line, count the object
-                    if direction < 0 and centroid[1] < H // 2:
-                        totalUp += 1
-                        to.counted = True
-                    # if the direction is positive (indicating the object
-                    # is moving down) AND the centroid is below the
-                    # center line, count the object
-                    elif direction > 0 and centroid[1] > H // 2:
-                        totalDown += 1
-                        to.counted = True
-                
-
-        trackableObjects[markerID] = to
-
-    # construct a tuple of information we will be displaying on the
-    # frame
-    info = [
-        ("Up", totalUp),
-        ("Down", totalDown),
-    ]
-    # loop over the info tuples and draw them on our frame
-    for (i, (k, v)) in enumerate(info):
-        text = "{}: {}".format(k, v)
-        cv2.putText(frame, text, (10, H - ((i * 20) + 20)),
-            cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
-
 
    # (height, width, channel) = frame.shape
     frame = cv2.flip(frame, 1)
