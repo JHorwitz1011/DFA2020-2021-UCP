@@ -19,6 +19,8 @@ FRAMES_NEEDED = 2
 frame_count_up = 0
 frame_count_down = 0
 
+BALL_SPEED = 5
+
 ARUCO_DICT = {
     "DICT_4X4_50": cv2.aruco.DICT_4X4_50,
     "DICT_4X4_100": cv2.aruco.DICT_4X4_100,
@@ -96,8 +98,8 @@ ball1.shape("square")
 ball1.color("green")
 ball1.penup()
 ball1.goto(0, 0)
-ball1.dx = 3
-ball1.dy = -3
+ball1.dx = BALL_SPEED
+ball1.dy = -BALL_SPEED
 
 balls = [ball1]  # balls = [ball1, ball2, ball3, ball4]
 
@@ -143,7 +145,7 @@ def readFrame(frame_count_up, frame_count_down):
     if ret:
         # Process frame @ lower quality level
         frame = imutils.resize(frame, FRAME_WIDTH)
-        (H, W) = frame.shape[:2]
+        #(H, W) = frame.shape[:2]
 
         (corners, ids, _rejected) = cv2.aruco.detectMarkers(frame, arucoDict, parameters = arucoParams)
         cv2.aruco.drawDetectedMarkers(frame,corners,ids,(0,255,0))
@@ -152,16 +154,18 @@ def readFrame(frame_count_up, frame_count_down):
             frame_count_up += detect(UP_MARKER, ids)
             frame_count_down += detect(DOWN_MARKER, ids)
 
+            """
             for (markerCorner, _markerID) in zip(corners, ids):
                 corners = markerCorner.reshape((4,2))
                 (topLeft, _topRight, bottomRight, _bottomLeft) = corners
                 cX = int((topLeft[0] + bottomRight[0]) / 2.0)
                 cY = int((topLeft[1] + bottomRight[1]) / 2.0)
 
-                #if cX < (W // 3) and cY < (H // 3):
-                #    paddle_a_up
-                #if cX < (W // 3) and cY > (H // 3):
-                #    paddle_a_down
+                if cX < (W // 3) and cY < (H // 3):
+                    paddle_a_up
+                if cX < (W // 3) and cY > (H // 3):
+                    paddle_a_down
+            """
         
         frame = cv2.flip(frame, 1)
         #cv2.rectangle(frame, (0, 0), (W // 3, H // 3), (255, 0, 0), 3)
@@ -184,6 +188,8 @@ wn.onkeypress(paddle_b_down, "Down")
 
 # Main game loop
 while True:
+    timeCheck = time.time()
+    
     wn.update()
     (frame_count_up, frame_count_down) = readFrame(frame_count_up, frame_count_down)
 
@@ -240,6 +246,8 @@ while True:
             ball.setx(-340)
             ball.dx *= -1
             #os.system("afplay bounce.wav&")
+    
+    print('fps - ',1/(time.time()-timeCheck))
 
 
 cv2.destroyAllWindows()
