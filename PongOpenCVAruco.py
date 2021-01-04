@@ -54,7 +54,7 @@ print("[INFO] detecting '{}' tags...".format(TAG_TYPE))
 arucoDict = cv2.aruco.Dictionary_get(ARUCO_DICT[TAG_TYPE])
 arucoParams = cv2.aruco.DetectorParameters_create()
 
-camera = cv2.VideoCapture(0)
+camera = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 camera.set(cv2.CAP_PROP_FRAME_WIDTH, FRAME_WIDTH)
 camera.set(cv2.CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT)
 
