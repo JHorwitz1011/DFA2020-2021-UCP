@@ -26,14 +26,9 @@ cv2.destroyWindow("Arrange Tracker")
 #convert to hsv color scheme for masking
 hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
 
-#show bgr and hsv images
+#show bgr images
 cv2.imshow("BGR image", bgr)
 cv2.waitKey(0)
-
-cv2.imshow("HSV image", hsv)
-cv2.waitKey(0)
-cv2.destroyWindow("HSV image")
-
 
 ############################## 2 ########################################
 
@@ -70,10 +65,12 @@ while not selected:
 		# if the 'q' key is pressed, break from the loop
 	if key == ord("q"):
 		break
-################################ 3 #####################################
-print("selected color = " + str(selected_color))
-diff = [i * 0.1 for i in selected_color]
 
+################################ 3 #####################################
+
+# takes our selected buffer, makes the lower and upper hue and saturation bounds within 10% of the originally selected value.
+# Then, leaves the value bound between its minimum and maximum.
+diff = [i * 0.1 for i in selected_color]
 print("diff = " + str(diff))
 lower_bound = [r - l for l, r, in zip(diff[:-1], selected_color[:-1])]
 lower_bound.append(0)
@@ -81,23 +78,45 @@ upper_bound = [r + l for l, r, in zip(diff[:-1], selected_color[:-1])]
 upper_bound.append(255)
 lower_bound = tuple(lower_bound)
 upper_bound = tuple(upper_bound)
-print("upper bound is:"  + str(upper_bound))
-print("lower bound is:" + str(lower_bound))
+
+# creates a mask with the respective lower and upper bounds
 mask = cv2.inRange(hsv, lower_bound, upper_bound)
+
 cv2.imshow("mask", mask)
 cv2.waitKey(0)
-result = cv2.bitwise_and(bgr, bgr, mask = mask) 
-cv2.imshow("filter?", result)
-cv2.waitKey(0)
 
-
-
-##########################################
+# result = cv2.bitwise_and(bgr, bgr, mask = mask) 
+# cv2.imshow("filter?", result)
+# cv2.waitKey(0)
 
 ################################## 4 ###########################
 
+#invert mask to get blobs to work
 inverted = cv2.bitwise_not(mask)
-detector = cv2.SimpleBlobDetector_create()
+
+#create detector with certain params to allow for more than just circles to be recognized
+params = cv2.SimpleBlobDetector_Params()
+
+# Change thresholds
+params.minThreshold = 10
+params.maxThreshold = 200
+
+# Filter by Area.
+params.filterByArea = True
+params.minArea = 1500
+
+# Filter by Circularity
+params.filterByCircularity = True
+params.minCircularity = 0.1
+
+# Filter by Convexity
+params.filterByConvexity = True
+params.minConvexity = 0.87
+
+# Filter by Inertia
+params.filterByInertia = True
+params.minInertiaRatio = 0.01
+detector = cv2.SimpleBlobDetector_create(params)
 
 # Detect blobs.
 keypoints = detector.detect(inverted)
@@ -105,7 +124,7 @@ keypoints = detector.detect(inverted)
 cartisean_points = cv2.KeyPoint_convert(keypoints)
 # Draw detected blobs as red circles.
 # cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS ensures the size of the circle corresponds to the size of blob
-im_with_keypoints = cv2.drawKeypoints(result, keypoints, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+im_with_keypoints = cv2.drawKeypoints(bgr, keypoints, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
 print("got to show, keypoints at: " + str(cartisean_points))
 # Show keypoints
