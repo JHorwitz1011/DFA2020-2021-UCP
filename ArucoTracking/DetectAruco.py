@@ -62,6 +62,8 @@ while True:
     frame = vs.read()
     frame = imutils.resize(frame, width =WINDOW_SIZE)
 
+
+    """
     (corners, ids, rejected) = cv2.aruco.detectMarkers(frame, arucoDict, parameters = arucoParams)
     cv2.aruco.drawDetectedMarkers(frame,corners,ids,(0,255,0))
 
@@ -69,8 +71,9 @@ while True:
 
 
     frame = cv2.flip(frame, 1)
-    
     """
+    
+    
     if len(corners) > 0:
     ids = ids.flatten()
 
@@ -97,7 +100,7 @@ while True:
         
         # draw the ArUco marker ID on the frame
         cv2.putText(frame, str(markerID), (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-"""
+
     cv2.namedWindow('Frame', cv2.WINDOW_AUTOSIZE)
     cv2.rectangle(frame, (W // 4, H // 4), ((W // 4) * 3, (H // 4) * 3), (0, 0, 255), 3)
     cv2.imshow("Frame", frame)

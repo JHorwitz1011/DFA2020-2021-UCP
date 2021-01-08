@@ -143,7 +143,6 @@ def readFrame(frame_count_up, frame_count_down):
     ret, frame = camera.read()
 
     if ret:
-        # Process frame @ lower quality level
         frame = imutils.resize(frame, FRAME_WIDTH)
         #(H, W) = frame.shape[:2]
 
@@ -189,7 +188,7 @@ wn.onkeypress(paddle_b_down, "Down")
 # Main game loop
 while True:
     timeCheck = time.time()
-    
+
     wn.update()
     (frame_count_up, frame_count_down) = readFrame(frame_count_up, frame_count_down)
 
