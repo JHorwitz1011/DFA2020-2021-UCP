@@ -63,43 +63,42 @@ while True:
     frame = imutils.resize(frame, width =WINDOW_SIZE)
 
 
-    """
+    
     (corners, ids, rejected) = cv2.aruco.detectMarkers(frame, arucoDict, parameters = arucoParams)
-    cv2.aruco.drawDetectedMarkers(frame,corners,ids,(0,255,0))
+    
+    #cv2.aruco.drawDetectedMarkers(frame,corners,ids,(0,255,0))
 
     cv2.line(frame, (0, H // 2), (W, H // 2), (0,255,255),2)
 
 
-    frame = cv2.flip(frame, 1)
-    """
-    
+    #frame = cv2.flip(frame, 1)    
     
     if len(corners) > 0:
-    ids = ids.flatten()
+        ids = ids.flatten()
 
-    for (markerCorner, markerID) in zip(corners, ids):
-        corners = markerCorner.reshape((4,2))
-        (topLeft, topRight, bottomRight, bottomLeft) = corners
+        for (markerCorner, markerID) in zip(corners, ids):
+            corners = markerCorner.reshape((4,2))
+            (topLeft, topRight, bottomRight, bottomLeft) = corners
 
-        topRight = (int(topRight[0]), int(topRight[1]))
-        bottomRight = (int(bottomRight[0]), int(bottomRight[1]))
-        bottomLeft = (int(bottomLeft[0]), int(bottomLeft[1]))
-        topLeft = (int(topLeft[0]), int(topLeft[1]))
+            topRight = (int(topRight[0]), int(topRight[1]))
+            bottomRight = (int(bottomRight[0]), int(bottomRight[1]))
+            bottomLeft = (int(bottomLeft[0]), int(bottomLeft[1]))
+            topLeft = (int(topLeft[0]), int(topLeft[1]))
 
-        # draw the bounding box of the ArUCo detection
-        cv2.line(frame, topLeft, topRight, (0, 255, 0), 2)
-        cv2.line(frame, topRight, bottomRight, (0, 255, 0), 2)
-        cv2.line(frame, bottomRight, bottomLeft, (0, 255, 0), 2)
-        cv2.line(frame, bottomLeft, topLeft, (0, 255, 0), 2)
-        
-        # compute and draw the center (x, y)-coordinates of the ArUco marker
-        cX = int((topLeft[0] + bottomRight[0]) / 2.0)
-        cY = int((topLeft[1] + bottomRight[1]) / 2.0)
-        centroid = [cX, cY]
-        cv2.circle(frame, (cX, cY), 4, (0, 0, 255), -1)
-        
-        # draw the ArUco marker ID on the frame
-        cv2.putText(frame, str(markerID), (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            # draw the bounding box of the ArUCo detection
+            cv2.line(frame, topLeft, topRight, (0, 255, 0), 2)
+            cv2.line(frame, topRight, bottomRight, (0, 255, 0), 2)
+            cv2.line(frame, bottomRight, bottomLeft, (0, 255, 0), 2)
+            cv2.line(frame, bottomLeft, topLeft, (0, 255, 0), 2)
+            
+            # compute and draw the center (x, y)-coordinates of the ArUco marker
+            cX = int((topLeft[0] + bottomRight[0]) / 2.0)
+            cY = int((topLeft[1] + bottomRight[1]) / 2.0)
+            centroid = [cX, cY]
+            cv2.circle(frame, (cX, cY), 4, (0, 0, 255), -1)
+            
+            # draw the ArUco marker ID on the frame
+            cv2.putText(frame, str(markerID), (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
     cv2.namedWindow('Frame', cv2.WINDOW_AUTOSIZE)
     cv2.rectangle(frame, (W // 4, H // 4), ((W // 4) * 3, (H // 4) * 3), (0, 0, 255), 3)
