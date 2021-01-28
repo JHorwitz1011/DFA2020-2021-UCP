@@ -7,11 +7,15 @@ import time
 from cv2 import cv2
 import sys
 import numpy as np
+import keyboard 
 
 TAG_TYPE = "DICT_ARUCO_ORIGINAL"
 WINDOW_SIZE = 1000
 W = 1000
 H = 750
+LINE = 2 * (H//3)
+TIME = 5
+currrent_time = 0
 
 ARUCO_DICT = {
     "DICT_4X4_50": cv2.aruco.DICT_4X4_50,
@@ -60,10 +64,8 @@ while True:
 
 
     
-    (corners, ids, rejected) = cv2.aruco.detectMarkers(frame, arucoDict, parameters = arucoParams)
-    
-    #cv2.aruco.drawDetectedMarkers(frame,corners,ids,(0,255,0))
-
+    (corners, ids, rejected) = cv2.aruco.detectMarkers(frame, arucoDict, parameters = arucoParams)    
+    cv2.aruco.drawDetectedMarkers(frame,corners,ids,(0,255,0))
     frame = cv2.flip(frame, 1) 
    
     
@@ -80,33 +82,24 @@ while True:
             bottomLeft = (int(bottomLeft[0]), int(bottomLeft[1]))
             topLeft = (int(topLeft[0]), int(topLeft[1]))
 
-            # draw the bounding box of the ArUCo detection
-            cv2.line(frame, topLeft, topRight, (0, 255, 0), 2)
-            cv2.line(frame, topRight, bottomRight, (0, 255, 0), 2)
-            cv2.line(frame, bottomRight, bottomLeft, (0, 255, 0), 2)
-            cv2.line(frame, bottomLeft, topLeft, (0, 255, 0), 2)
-            
-            # compute and draw the center (x, y)-coordinates of the ArUco marker
             cX = int((topLeft[0] + bottomRight[0]) / 2.0)
             cY = int((topLeft[1] + bottomRight[1]) / 2.0)
-            centroid = [cX, cY]
-            cv2.circle(frame, (cX, cY), 4, (0, 0, 255), -1)
-            
-            #Flip before text is written
+
             frame = cv2.flip(frame, 1) 
-
-            # draw the ArUco marker ID on the frame - topLeft[0], topLeft[1] - 15
-            cv2.putText(frame, str(markerID), (10, 75), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 3)
-
-
-            if cY < H //2:
-                cv2.putText(frame, "Up", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 3)
+   
+            if cY < LINE:
+                cv2.putText(frame, "Scan", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 3)
             else:
-                cv2.putText(frame, "Down", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 3)
+                cv2.putText(frame, "Enter" + str(current_time), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 3)
+                current_time += time.time()
+            
+            if current_time > TIME:
+                keyboard.press_and_release("enter")
+                current_time = 0
 
     cv2.namedWindow('Frame', cv2.WINDOW_AUTOSIZE)
     #cv2.rectangle(frame, (W // 4, H // 4), ((W // 4) * 3, (H // 4) * 3), (0, 0, 255), 3)
-    cv2.line(frame, (0, H // 2), (W, H // 2), (0,255,0),2)
+    cv2.line(frame, (0, LINE), (W, LINE), (0,255,0),2)
     cv2.imshow("Frame", frame)
 
 
