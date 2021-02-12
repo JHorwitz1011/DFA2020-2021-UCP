@@ -56,7 +56,7 @@ while True:
     if key == ord("s"):
         initialBoundingBox = cv2.selectROI("Frame", frame, fromCenter = False, showCrosshair = True)
         tracker.init(frame, initialBoundingBox)
-    elif key == ord("q"):
+    elif key == 27:
         break
 
 vs.stop()
