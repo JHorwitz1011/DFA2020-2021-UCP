@@ -10,12 +10,17 @@ import numpy as np
 import keyboard 
 
 TAG_TYPE = "DICT_ARUCO_ORIGINAL"
-WINDOW_SIZE = 1000
-W = 1000
-H = 750
-LINE = 2 * (H//3)
-TIME = 5
-currrent_time = 0
+WINDOW_SIZE = W = 750
+H = (W // 4) * 3
+
+#Add a sensitivity sldier or abiltiy to adjust dimensions of box
+UP_LINE = H//4    #cv2.rectangle(frame, (W // 4, H // 4), ((W // 4) * 3, (H // 4) * 3), (0, 0, 255), 3)
+DOWN_LINE = (H // 4) * 3
+LEFT_LINE = W // 4
+RIGHT_LINE = (W // 4) * 3
+
+FRAMES = 75
+up_frames = down_frames = left_frames = right_frames = 0
 
 ARUCO_DICT = {
     "DICT_4X4_50": cv2.aruco.DICT_4X4_50,
@@ -54,6 +59,7 @@ arucoParams = cv2.aruco.DetectorParameters_create()
 # initialize the video stream and allow the camera sensor to warm up
 print("[INFO] starting video stream...")
 vs = VideoStream(src=0).start()
+vs.__setattr__
 time.sleep(2.0)
 
 while True:
@@ -87,20 +93,44 @@ while True:
 
             frame = cv2.flip(frame, 1) 
    
-            if cY < LINE:
-                cv2.putText(frame, "Up", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 3)
-            else:
-                cv2.putText(frame, "Down" + str(current_time), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 3)
-                current_time += time.time()
+            if cY < UP_LINE:
+                cv2.putText(frame, "Up" + str(up_frames), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 3)
+                up_frames += 1
+            elif cY > DOWN_LINE:
+                cv2.putText(frame, "Down" + str(down_frames), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 3)
+                down_frames += 1
             
-            if current_time > TIME and markerID == 5:
-                keyboard.press_and_release("enter")
-                current_time = 0
+      
+            if cX > RIGHT_LINE:
+                cv2.putText(frame, "Left" + str(left_frames), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 3)
+                left_frames += 1
+            elif cX < LEFT_LINE:
+                cv2.putText(frame, "Right" + str(right_frames), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 3)
+                right_frames += 1        
+            
+            if up_frames > FRAMES:
+                keyboard.press_and_release('up')
+                up_frames = 0
+
+            elif down_frames > FRAMES:
+                keyboard.press_and_release('down')
+                down_frames = 0
+
+            elif left_frames > FRAMES:
+                keyboard.press_and_release('left')
+                left_frames = 0
+
+            elif right_frames > FRAMES:
+                keyboard.press_and_release('right')
+                right_frames = 0     
+
             
 
     cv2.namedWindow('Frame', cv2.WINDOW_AUTOSIZE)
-    #cv2.rectangle(frame, (W // 4, H // 4), ((W // 4) * 3, (H // 4) * 3), (0, 0, 255), 3)
-    cv2.line(frame, (0, LINE), (W, LINE), (0,255,0),2)
+    cv2.line(frame, (0,UP_LINE), (W, UP_LINE), (0,255,0),2)
+    cv2.line(frame, (0, DOWN_LINE), (W, DOWN_LINE), (0,255,0),2)
+    cv2.line(frame, (LEFT_LINE,0 ), (LEFT_LINE, H), (0,255,0),2)
+    cv2.line(frame, (RIGHT_LINE, 0), (RIGHT_LINE, H), (0,255,0),2)
     cv2.imshow("Frame", frame)
 
 
