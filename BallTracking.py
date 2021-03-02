@@ -17,8 +17,11 @@ args = vars(ap.parse_args())
 # define the lower and upper boundaries of the "green"
 # ball in the HSV color space, then initialize the
 # list of tracked points
-orangeLower = (0, 220, 158)
-orangeUpper = (12, 255, 255)
+# orangeLower = (0, 220, 158)
+# orangeUpper = (12, 255, 255)
+orangeLower = (0, 130, 130)
+orangeUpper = (19, 255, 255)
+
 pts = deque(maxlen=args["buffer"])
 # if a video path was not supplied, grab the reference
 # to the webcam
@@ -76,7 +79,7 @@ while True:
 			cv2.circle(frame, center, 5, (0, 0, 255), -1)
 	# update the points queue
 	pts.appendleft(center)
-
+	print(center)
 
     	# loop over the set of tracked points
 	for i in range(1, len(pts)):
