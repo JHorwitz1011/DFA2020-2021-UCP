@@ -6,6 +6,8 @@ import argparse
 import cv2
 import imutils
 import time
+import math
+import keyboard
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-v", "--video",
@@ -20,9 +22,17 @@ args = vars(ap.parse_args())
 # orangeLower = (0, 220, 158)
 # orangeUpper = (12, 255, 255)
 orangeLower = (0, 130, 130)
-orangeUpper = (19, 255, 255)
+orangeUpper = (19, 255, 255)   
+   
+###constants###   
+maxlen=10   
+threshold = 150 
+LINE_RED = (0, 0, 255)
+LINE_GREEN = (0, 255, 0) 
 
-pts = deque(maxlen=args["buffer"])
+##vraiables##
+cooldown = 0
+pts = deque(maxlen=maxlen)   
 # if a video path was not supplied, grab the reference
 # to the webcam
 if not args.get("video", False):
@@ -33,8 +43,19 @@ else:
 # allow the camera or video file to warm up
 time.sleep(2.0)
 
+last_input = False
+def press(input, key='a'):
+	global cooldown
+	global last_input
+	if input and not last_input:
+		keyboard.press_and_release(key)
+		cooldown = 50
+	last_input = input
+
 # keep looping
 while True:
+	if cooldown > 0:
+		print(cooldown)
 	# grab the current frame
 	frame = vs.read()
 	# handle the frame from VideoCapture or VideoStream
@@ -55,7 +76,7 @@ while True:
 	mask = cv2.erode(mask, None, iterations=2)
 	mask = cv2.dilate(mask, None, iterations=2)
 
-    	# find contours in the mask and initialize the current
+	# find contours in the mask and initialize the current
 	# (x, y) center of the ball
 	cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
 		cv2.CHAIN_APPROX_SIMPLE)
@@ -75,11 +96,33 @@ while True:
 			# draw the circle and centroid on the frame,
 			# then update the list of tracked points
 			cv2.circle(frame, (int(x), int(y)), int(radius),
-				(0, 255, 255), 2)
+					   (0, 255, 255), 2)
 			cv2.circle(frame, center, 5, (0, 0, 255), -1)
 	# update the points queue
 	pts.appendleft(center)
-	print(center)
+
+	if(len(pts) == maxlen and pts[maxlen-1] is not None and pts[0] is not None):
+		#print('left:', pts[0])
+		#print('right:', pts[maxlen-1])
+		xdif = pts[maxlen-1][0] - pts[0][0]
+		#print('xdif:', xdif)
+		ydif = pts[maxlen-1][1] - pts[0][1]
+		#print('ydif:', ydif)
+		if xdif > threshold:
+			print('RIGHT')
+			press(True, key='d')
+		elif xdif < -1 * threshold:
+			print('LEFT')
+			press(True, key='a')
+		elif ydif > threshold:
+			print('UP')
+			press(True, key='w')
+		elif ydif < -1 * threshold:
+			print('DOWN')
+			press(True, key='s')
+		else:
+			press(False)
+
 
     	# loop over the set of tracked points
 	for i in range(1, len(pts)):
@@ -90,7 +133,13 @@ while True:
 		# otherwise, compute the thickness of the line and
 		# draw the connecting lines
 		thickness = int(np.sqrt(args["buffer"] / float(i + 1)) * 2.5)
-		cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
+		if last_input or cooldown > 0:
+			cv2.line(frame, pts[i - 1], pts[i], LINE_GREEN, thickness)
+			if cooldown > 0:
+				cooldown -= 1
+		else:
+			cv2.line(frame, pts[i - 1], pts[i], LINE_RED, thickness)
+
 	# show the frame to our screen
 	cv2.imshow("Frame", frame)
 	key = cv2.waitKey(1) & 0xFF
