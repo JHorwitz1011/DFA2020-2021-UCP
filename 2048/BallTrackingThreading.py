@@ -429,6 +429,7 @@ def detect_color(img, points):
             else:
                     cv2.line(img, pts[i - 1], pts[i], LINE_RED, thickness)
 
+    img = cv2.flip(img, 1)
     return img
 
     
@@ -560,12 +561,12 @@ class Wrapper:
                 callback()
                 self.webcam_attempts = 0
                 #self.app_gui.root.update_idletasks()
-                self.app_gui.root.after(70, self.fetch_webcam_video)
+                self.app_gui.root.after(7, self.fetch_webcam_video)
                     
             except queue.Empty:
-                if (self.webcam_attempts <= 50):
+                if (self.webcam_attempts <= 500):
                     self.webcam_attempts = self.webcam_attempts + 1
-                    self.app_gui.root.after(100, self.fetch_webcam_video)
+                    self.app_gui.root.after(10, self.fetch_webcam_video)
 
     def test_gui(self):
         #test images update
