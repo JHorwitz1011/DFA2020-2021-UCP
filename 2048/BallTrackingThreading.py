@@ -24,16 +24,16 @@ from imutils.video import VideoStream
 import imutils
 import numpy as np
 
-WIN_SIZE = W = 700
-H = (W // 4) * 3
+WIN_SIZE = W = H =  700
+#H = (W // 4) * 3
 
 # define the lower and upper boundaries of the "green"
 # ball in the HSV color space, then initialize the
 # list of tracked points
-# orangeLower = (0, 220, 158)
-# orangeUpper = (12, 255, 255)
-orangeLower = (0, 130, 130)
-orangeUpper = (19, 255, 255)   
+orangeLower = (0, 220, 158)
+orangeUpper = (12, 255, 255)
+#orangeLower = (0, 130, 130)
+#orangeUpper = (19, 255, 255)   
    
 ###constants###   
 maxlen=10   
@@ -428,7 +428,6 @@ def detect_color(img, points):
                             cooldown -= 1
             else:
                     cv2.line(img, pts[i - 1], pts[i], LINE_RED, thickness)
-
 
     return img
 
