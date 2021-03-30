@@ -1,10 +1,8 @@
 from tkinter import *
-from tkinter import ttk
 from constants import *
-
-##CONSTANTS##
-
-
+from PIL import ImageTk, Image
+from threading import Thread
+import time
 class GameBoard(Canvas):
 
     def __init__(self, parent,**kwargs):
@@ -13,7 +11,7 @@ class GameBoard(Canvas):
         self.width = self.winfo_reqwidth() 
         self.pieces = []
         self.bind("<Configure>", self.on_resize)
-
+        self.bind("<<Test>>",self.test)
 
         # config settings
         self['bg'] = BACKGROUND_COLOR_GAME #background color
@@ -22,6 +20,15 @@ class GameBoard(Canvas):
 
        # c = self.create_rectangle(, 10, 100, 100,fill=BACKGROUND_COLOR_CELL_EMPTY,width=GRID_PADDING/2)
         #c['bg'] = BACKGROUND_COLOR_CELL_EMPTY
+        self.draw_background()
+
+        self.pieces.append(ImageTk.PhotoImage(Image.open("test.png")))
+        self.create_image(0,0,anchor=NW,image=self.pieces[0])
+        #self.tag_lower()
+    def test(self):
+        print("threading, works!")
+
+    def draw_background(self):
         for i in range(GRID_LEN):
             for j in range(GRID_LEN):
                 pad_offset = GRID_PADDING
@@ -43,17 +50,24 @@ class GameBoard(Canvas):
         # rescale all the objects tagged with the "all" tag
         self.scale("all",0,0,wscale,hscale)
         print(self.height, self.width)
+        #root.event_generate("<<Test>>")
 
-#lets us import the class without worrying about the script accidentally running
+
 if __name__ == '__main__':
     root = Tk()
     root.columnconfigure(0, weight=1)
     root.rowconfigure(0, weight=1)
-
+    #root.bind("<<Test>>",threadingtest)
     side = GRID_LEN *( SQUARE_SIDE + GRID_PADDING ) + GRID_PADDING
     canvas = GameBoard(root,width=side,height=side)
     canvas.pack(fill=BOTH, expand=YES)
-
     canvas.addtag_all('all')
+    #looping(root)
     root.mainloop()
-    print(canvas.height, canvas.width)
+#    loop_thread = Thread(target=looping,args=(root,))
+ #   loop_thread.start()
+  #  for x in range(10):
+   #     time.sleep(1)
+        #print('testing thread')
+   # loop_thread.join()
+    
