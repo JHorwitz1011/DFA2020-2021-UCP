@@ -347,6 +347,8 @@ def press(input, key='a'):
 #EDIT
 #function to detect Aruco with OpenCV
 def detect_color(img, points):
+    #img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+
     global cooldown
     if cooldown > 0:
         print(cooldown)
@@ -355,7 +357,7 @@ def detect_color(img, points):
     # color space
     img = imutils.resize(img, width=600)
     blurred = cv2.GaussianBlur(img, (11, 11), 0)
-    hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
+    hsv = cv2.cvtColor(blurred, cv2.COLOR_RGB2HSV)
     # construct a mask for the color "green", then perform
     # a series of dilations and erosions to remove any small
     # blobs left in the mask
