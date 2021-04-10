@@ -32,9 +32,16 @@ WIN_SIZE = W = H =  700
 # list of tracked points
 #orangeLower = (0, 220, 158)
 #orangeUpper = (12, 255, 255)
+colorUpper = (0,0,0)
+colorLower = (0,0,0)
+
 orangeLower = (0, 130, 130)
 orangeUpper = (19, 255, 255)   
-   
+yellowLower= (20, 100, 125)
+yellowUpper= (255, 255, 255)   
+blueLower= (100,75, 100)
+blueUpper= (255, 255, 255)
+
 ###constants###   
 maxlen=10   
 threshold = 150 
@@ -156,6 +163,7 @@ class LeftView(tk.Frame):
         self.image_label = tk.Label(self)
         #put the image label inside left screen
         self.image_label.pack(side="left", fill="both", expand="yes", padx=10, pady=10)
+
         
     def update_image(self, image):
         #configure image_label with new image 
@@ -181,15 +189,44 @@ class RightView(tk.Frame):
     def setup_ui(self):
         #create a webcam output label
         #EDIT
-        self.output_label = tk.Label(self, text="Aruco Tracking", bg="black", fg="white")
+
+        self.output_label = tk.Label(self, text="Color Ball Tracking", bg="white", fg="black")
         self.output_label.pack(side="top", fill="both", expand="yes", padx=10)
         
         #create label to hold image
         self.image_label = tk.Label(self)
         #put the image label inside left screen
         self.image_label.pack(side="left", fill="both", expand="yes", padx=10, pady=10)
+        self.selection_frame = tk.Frame(self,bg='gray')
+
+        self.selected_color = 100
+        self.orange_button = tk.Radiobutton(self.selection_frame, text='      ', value=0,
+            command=self.orange_callback, bg='orange')
+        self.orange_button.pack()
         
-        
+        self.blue_button = tk.Radiobutton(self.selection_frame, text='      ',value=1,
+                                          command=self.blue_callback, bg='blue', )
+        self.blue_button.pack()
+
+        self.yellow_button = tk.Radiobutton(self.selection_frame, text='      ',value=2,
+                                          command=self.yellow_callback, bg='yellow', )
+        self.yellow_button.pack()
+
+        self.selection_frame.pack()
+
+    def orange_callback(self):
+        global colorUpper, colorLower
+        colorUpper = orangeUpper
+        colorLower = orangeLower
+    
+    def blue_callback(self):
+        global colorUpper, colorLower
+        colorUpper = blueUpper
+        colorLower = blueLower  
+    def yellow_callback(self):
+        global colorUpper, colorLower
+        colorUpper = yellowUpper
+        colorLower = yellowLower    
     def update_image(self, image):
         #configure image_label with new image 
         self.image_label.configure(image=image)
@@ -361,7 +398,7 @@ def detect_color(img, points):
     # construct a mask for the color "green", then perform
     # a series of dilations and erosions to remove any small
     # blobs left in the mask
-    mask = cv2.inRange(hsv, orangeLower, orangeUpper)
+    mask = cv2.inRange(hsv, colorLower, colorUpper)
     mask = cv2.erode(mask, None, iterations=2)
     mask = cv2.dilate(mask, None, iterations=2)
 
