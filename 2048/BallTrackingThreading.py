@@ -330,7 +330,7 @@ import cv2
 class VideoCamera:
     def __init__(self):
         #passing 0 to VideoCapture means fetch video from webcam
-        self.video_capture = cv2.VideoCapture(1)
+        self.video_capture = cv2.VideoCapture(0)
                 
     #release resources like webcam
     def __del__(self):
