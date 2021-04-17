@@ -9,6 +9,7 @@ from PIL import ImageTk
 import cv2
 import threading
 import queue
+import time
 
 import sys
 from tkinter import Frame, Label, CENTER
@@ -55,6 +56,11 @@ pts = deque(maxlen=maxlen)
 last_input = False
 
 LINE_THICKNESS = 64
+
+## FPS
+currentTime = 0
+nextTime = 0
+firstFrame= True
 
 # I have taken a more modular approach so that UI is easy to change, update and extend. I have also developed UI in a way so that UI has no knowledge of how data is fetched or processed, it is just a UI. 
 
@@ -282,7 +288,7 @@ class AppGui:
     def process_image(self, image):
         #resize image to desired width and height
         #image = image.resize((self.image_width, self.image_height),Image.ANTIALIAS)
-        image = cv2.resize(image, (self.image_width, self.image_height))
+        #image = cv2.resize(image, (self.image_width, self.image_height))
         
         #EDIT
         #image = cv2.flip(image, 1)
@@ -330,7 +336,7 @@ import cv2
 class VideoCamera:
     def __init__(self):
         #passing 0 to VideoCapture means fetch video from webcam
-        self.video_capture = cv2.VideoCapture(1)
+        self.video_capture = cv2.VideoCapture(0)
                 
     #release resources like webcam
     def __del__(self):
@@ -385,14 +391,14 @@ def press(input, key='a'):
 #function to detect Aruco with OpenCV
 def detect_color(img, points):
     #img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-
+    timeCheck = time.time()
     global cooldown
     if cooldown > 0:
         print(cooldown)
    
     # resize the img, blur it, and convert it to the HSV
     # color space
-    img = imutils.resize(img, width=600)
+    img = imutils.resize(img, width=600) 
     blurred = cv2.GaussianBlur(img, (11, 11), 0)
     hsv = cv2.cvtColor(blurred, cv2.COLOR_RGB2HSV)
     # construct a mask for the color "green", then perform
@@ -467,6 +473,15 @@ def detect_color(img, points):
                     cv2.line(img, pts[i - 1], pts[i], LINE_RED, thickness)
 
     img = cv2.flip(img, 1)
+
+    #Adjust Framerate
+    frameRate = 1 / (time.time() - timeCheck) 
+    print(frameRate)
+
+    #if(frameRate >30):
+        
+
+
     return img
 
     
@@ -504,6 +519,7 @@ class WebcamThread(threading.Thread):
                 self.is_stopped = True
                 break
             
+
             #read a video frame
             ret, self.current_frame = self.camera.read_image()
 
@@ -519,6 +535,7 @@ class WebcamThread(threading.Thread):
             if self.callback_queue.full() == False:
                 #put the update UI callback to queue so that main thread can execute it
                 self.callback_queue.put((lambda: self.update_on_main_thread(self.current_frame, self.app_gui)))
+
         
         #fetching complete, let's release camera
         #self.camera.release()
