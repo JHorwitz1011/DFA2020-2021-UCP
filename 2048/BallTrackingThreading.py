@@ -25,6 +25,17 @@ from imutils.video import VideoStream
 import imutils
 import numpy as np
 
+# Data persistance
+import os
+import os.path 
+import shelve
+from pathlib import Path
+
+folderPath = os.path.join(Path.home(),"2048Vision")
+filePath = os.path.join(folderPath, "data")
+color = 'blue'
+
+
 WIN_SIZE = W = H =  700
 #H = (W // 4) * 3
 
@@ -36,12 +47,12 @@ WIN_SIZE = W = H =  700
 colorUpper = (0,0,0)
 colorLower = (0,0,0)
 
-orangeLower = (0, 130, 130)
-orangeUpper = (19, 255, 255)   
-yellowLower= (20, 100, 125)
-yellowUpper= (255, 255, 255)   
-blueLower= (100,75, 100)
-blueUpper= (255, 255, 255)
+orangeLower = (0, 100, 100)
+orangeUpper = (25, 255, 255)   
+yellowLower= (0, 70, 190)
+yellowUpper= (85, 255, 255)   
+blueLower= (90,200, 0)
+blueUpper= (115, 255, 255)
 
 ###constants###   
 maxlen=10   
@@ -58,9 +69,8 @@ last_input = False
 LINE_THICKNESS = 64
 
 ## FPS
-currentTime = 0
+delayFrame = False
 nextTime = 0
-firstFrame= True
 
 # I have taken a more modular approach so that UI is easy to change, update and extend. I have also developed UI in a way so that UI has no knowledge of how data is fetched or processed, it is just a UI. 
 
@@ -205,18 +215,26 @@ class RightView(tk.Frame):
         self.image_label.pack(side="left", fill="both", expand="yes", padx=10, pady=10)
         self.selection_frame = tk.Frame(self,bg='white')
 
-        self.selected_color = 100
-        self.orange_button = tk.Radiobutton(self.selection_frame, text='      ', value=3,
-            command=self.orange_callback, bg='orange')
+        #color data
+        global color
+        self.selected_color = tk.StringVar()    #Tkinter needs this variable type for the buttons, seems to be an enum type
+        self.selected_color.set(color)
+        print("selected", self.selected_color)
+        self.orange_button = tk.Radiobutton(self.selection_frame, text='      ', value='orange',
+            command=self.orange_callback, bg='orange', variable = self.selected_color)
         self.orange_button.pack()
         
-        self.blue_button = tk.Radiobutton(self.selection_frame, text='      ',value=1,
-                                          command=self.blue_callback, bg='blue')
+        self.blue_button = tk.Radiobutton(self.selection_frame, text='      ',value='blue',
+                                          command=self.blue_callback, bg='blue',variable = self.selected_color)
         self.blue_button.pack()
 
-        self.yellow_button = tk.Radiobutton(self.selection_frame, text='      ',value=2,
-                                          command=self.yellow_callback, bg='yellow')
+        self.yellow_button = tk.Radiobutton(self.selection_frame, text='      ',value='yellow',
+                                          command=self.yellow_callback, bg='yellow',variable = self.selected_color)
         self.yellow_button.pack()
+
+        
+        
+
         self.slider = tk.Scale(self.selection_frame, from_=50, to_=250, command=self.slider_callback)
         global threshold
         self.slider.set(threshold)
@@ -226,21 +244,33 @@ class RightView(tk.Frame):
     def slider_callback(self, value):
         global threshold
         threshold = int(value)
-        print('slider callback wokrs', value, self)
+
+        with shelve.open(filePath) as dataFile:
+            dataFile['threshold'] = threshold
+
+        print('slider callback works', value, self)
 
     def orange_callback(self):
         global colorUpper, colorLower
         colorUpper = orangeUpper
         colorLower = orangeLower
+        with shelve.open(filePath) as dataFile:
+            dataFile['color'] = 'orange'
     
     def blue_callback(self):
         global colorUpper, colorLower
         colorUpper = blueUpper
         colorLower = blueLower  
+        with shelve.open(filePath) as dataFile:
+            dataFile['color'] = 'blue'
+
     def yellow_callback(self):
         global colorUpper, colorLower
         colorUpper = yellowUpper
-        colorLower = yellowLower    
+        colorLower = yellowLower 
+        with shelve.open(filePath) as dataFile:
+            dataFile['color'] = 'yellow'
+
     def update_image(self, image):
         #configure image_label with new image 
         self.image_label.configure(image=image)
@@ -399,7 +429,7 @@ def press(input, key='a'):
 #function to detect Aruco with OpenCV
 def detect_color(img, points):
     #img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-    timeCheck = time.time()
+    
     global cooldown
     if cooldown > 0:
         print(cooldown)
@@ -483,11 +513,10 @@ def detect_color(img, points):
     img = cv2.flip(img, 1)
 
     #Adjust Framerate
-    frameRate = 1 / (time.time() - timeCheck) 
-    print(frameRate)
-
+    #frameRate = 1 / (time.time() - timeCheck) 
+    #print(frameRate)
     #if(frameRate >30):
-        
+    #    delayFrame = True   
 
 
     return img
@@ -575,6 +604,11 @@ class WebcamThread(threading.Thread):
 
 class Wrapper:
     def __init__(self):
+
+         #Data storage initiate first so GUI created with correct values
+        self.init_data()
+
+
         self.app_gui = AppGui()
         
         #create a Video camera instance
@@ -602,6 +636,20 @@ class Wrapper:
         #start fetching video
         self.fetch_webcam_video()
     
+    def init_data(self):
+        global threshold
+        global color
+
+        if(not os.path.exists(folderPath)):
+            os.makedirs(folderPath)
+        
+        if (not len(os.listdir(folderPath)) == 0):    
+            with shelve.open(filePath) as dataFile:
+                threshold = dataFile['threshold']
+                color = dataFile['color']
+                print(color)
+        
+
     def on_gui_closing(self):
         self.webcam_attempts = 51
         self.webcam_thread.stop()
