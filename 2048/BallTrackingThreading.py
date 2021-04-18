@@ -12,7 +12,7 @@ import queue
 import time
 
 import sys
-from tkinter import Frame, Label, CENTER
+from tkinter import Frame, Label, CENTER, Scale
 import random
 import keyboard 
 
@@ -203,22 +203,30 @@ class RightView(tk.Frame):
         self.image_label = tk.Label(self)
         #put the image label inside left screen
         self.image_label.pack(side="left", fill="both", expand="yes", padx=10, pady=10)
-        self.selection_frame = tk.Frame(self,bg='gray')
+        self.selection_frame = tk.Frame(self,bg='white')
 
         self.selected_color = 100
-        self.orange_button = tk.Radiobutton(self.selection_frame, text='      ', value=0,
+        self.orange_button = tk.Radiobutton(self.selection_frame, text='      ', value=3,
             command=self.orange_callback, bg='orange')
         self.orange_button.pack()
         
         self.blue_button = tk.Radiobutton(self.selection_frame, text='      ',value=1,
-                                          command=self.blue_callback, bg='blue', )
+                                          command=self.blue_callback, bg='blue')
         self.blue_button.pack()
 
         self.yellow_button = tk.Radiobutton(self.selection_frame, text='      ',value=2,
-                                          command=self.yellow_callback, bg='yellow', )
+                                          command=self.yellow_callback, bg='yellow')
         self.yellow_button.pack()
-
+        self.slider = tk.Scale(self.selection_frame, from_=50, to_=250, command=self.slider_callback)
+        global threshold
+        self.slider.set(threshold)
+        self.slider.pack()
         self.selection_frame.pack()
+
+    def slider_callback(self, value):
+        global threshold
+        threshold = int(value)
+        print('slider callback wokrs', value, self)
 
     def orange_callback(self):
         global colorUpper, colorLower
