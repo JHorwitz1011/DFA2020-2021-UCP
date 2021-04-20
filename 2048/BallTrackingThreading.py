@@ -238,8 +238,12 @@ class RightView(tk.Frame):
                                           command=self.yellow_callback, bg='yellow',variable = self.selected_color)
         self.yellow_button.pack()
 
-        
-        
+        self.magenta_button = tk.Radiobutton(self.selection_frame, text='      ', value = 'magenta',
+                                            command = self.magenta_callback, bg = 'magenta', variable = self.selected_color )
+        self.green_button = tk.Radiobutton(self.selection_frame, text='      ', value = 'green',
+                                            command = self.green_callback, bg = 'green', variable = self.selected_color )
+        self.magenta_button.pack()
+        self.green_button.pack()
 
         self.slider = tk.Scale(self.selection_frame, from_=50, to_=250, command=self.slider_callback)
         global threshold
@@ -258,9 +262,8 @@ class RightView(tk.Frame):
 
     def orange_callback(self):
         global colorUpper, colorLower
-        #TODO make a new button for magenta 
-        colorUpper = magentaUpper
-        colorLower = magentaLower
+        colorUpper = orangeUpper
+        colorLower = orangeLower
         with shelve.open(filePath) as dataFile:
             dataFile['color'] = 'orange'
     
@@ -273,11 +276,24 @@ class RightView(tk.Frame):
 
     def yellow_callback(self):
         global colorUpper, colorLower
-        #TODO make separate green button
-        colorUpper = greenUpper
-        colorLower = greenLower 
+        colorUpper = yellowUpper
+        colorLower = yellowLower 
         with shelve.open(filePath) as dataFile:
             dataFile['color'] = 'yellow'
+
+    def magenta_callback(self):
+        global colorLower,colorUpper
+        colorLower = magentaLower
+        colorUpper = magentaUpper
+        with shelve.open(filePath) as dataFile:
+            dataFile['color'] = 'magenta'
+
+    def green_callback(self):
+        global colorLower,colorUpper
+        colorLower = greenLower
+        colorUpper = greenUpper
+        with shelve.open(filePath) as dataFile:
+            dataFile['color'] = 'green'
 
     def update_image(self, image):
         #configure image_label with new image 
