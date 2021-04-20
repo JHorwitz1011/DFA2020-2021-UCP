@@ -54,6 +54,10 @@ yellowUpper= (85, 255, 255)
 blueLower= (90,200, 0)
 blueUpper= (115, 255, 255)
 
+
+magentaLower = (87 ,132,136)
+magentaUpper = (179,255,255)
+
 ###constants###   
 maxlen=10   
 threshold = 150 
@@ -252,8 +256,9 @@ class RightView(tk.Frame):
 
     def orange_callback(self):
         global colorUpper, colorLower
-        colorUpper = orangeUpper
-        colorLower = orangeLower
+        #TODO make a new button for magenta 
+        colorUpper = magentaUpper
+        colorLower = magentaLower
         with shelve.open(filePath) as dataFile:
             dataFile['color'] = 'orange'
     
