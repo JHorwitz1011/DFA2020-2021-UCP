@@ -224,7 +224,7 @@ class RightView(tk.Frame):
         #color data
         global color
         self.selected_color = tk.StringVar()    #Tkinter needs this variable type for the buttons, seems to be an enum type
-        self.selected_color.set(color)
+ 
         print("selected", self.selected_color)
         self.orange_button = tk.Radiobutton(self.selection_frame, text='      ', value='orange',
             command=self.orange_callback, bg='orange', variable = self.selected_color)
@@ -244,7 +244,8 @@ class RightView(tk.Frame):
                                             command = self.green_callback, bg = 'green', variable = self.selected_color )
         self.magenta_button.pack()
         self.green_button.pack()
-
+        self.selected_color.set(color)
+        self.blue_callback()
         self.slider = tk.Scale(self.selection_frame, from_=50, to_=250, command=self.slider_callback)
         global threshold
         self.slider.set(threshold)
@@ -257,6 +258,7 @@ class RightView(tk.Frame):
 
         with shelve.open(filePath) as dataFile:
             dataFile['threshold'] = threshold
+            #dataFile['color'] = 'blue'         ###############################################
 
         print('slider callback works', value, self)
 
@@ -668,11 +670,20 @@ class Wrapper:
             os.makedirs(folderPath)
         
         if (not len(os.listdir(folderPath)) == 0):    
-            with shelve.open(filePath) as dataFile:
+            with shelve.open(filePath, 'c') as dataFile:
+                thresholdFlag = False 
+                colorFlag = False               
+                for x in dataFile.keys():
+                    if x == 'threshold':
+                        thresholdFlag = True
+                    elif x == 'color':
+                        colorFlag = True
+                
+
+
                 threshold = dataFile['threshold']
                 color = dataFile['color']
                 print(color)
-        
 
     def on_gui_closing(self):
         self.webcam_attempts = 51
