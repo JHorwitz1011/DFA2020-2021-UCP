@@ -1,4 +1,6 @@
 /.vscode
 /.vscode
 2048/__pycache__/constants.cpython-38.pyc
-.gitignore
+2048/__pycache__/logic.cpython-38.pyc
+/.2048/__pycache__/**
+
