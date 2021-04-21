@@ -35,6 +35,8 @@ folderPath = os.path.join(Path.home(),"2048Vision")
 filePath = os.path.join(folderPath, "data")
 color = 'blue'
 
+# GUI
+BUTTON_HEIGHT = 2
 
 WIN_SIZE = W = H =  700
 #H = (W // 4) * 3
@@ -212,12 +214,12 @@ class RightView(tk.Frame):
         #EDIT
 
         self.output_label = tk.Label(self, text="Color Ball Tracking", bg="white", fg="black")
-        self.output_label.pack(side="top", fill="both", expand="yes", padx=10)
+        self.output_label.pack(side=tk.TOP, fill="both", expand="yes", padx=10)
         
         #create label to hold image
         self.image_label = tk.Label(self)
         #put the image label inside left screen
-        self.image_label.pack(side="left", fill="both", expand="yes", padx=10, pady=10)
+        self.image_label.pack(side=tk.TOP, fill="both", expand="yes", padx=10, pady=10)
         self.selection_frame = tk.Frame(self,bg='white')
 
         #color data
@@ -226,30 +228,33 @@ class RightView(tk.Frame):
  
         print("selected", self.selected_color)
         self.orange_button = tk.Radiobutton(self.selection_frame, text='      ', value='orange',
-            command=self.orange_callback, bg='orange', variable = self.selected_color)
-        self.orange_button.pack()
+            command=self.orange_callback, bg='orange', variable = self.selected_color, height = BUTTON_HEIGHT )
+        self.orange_button.pack(side = tk.LEFT)
         
         self.blue_button = tk.Radiobutton(self.selection_frame, text='      ',value='blue',
-                                          command=self.blue_callback, bg='blue',variable = self.selected_color)
-        self.blue_button.pack()
+                                          command=self.blue_callback, bg='blue',variable = self.selected_color, height = BUTTON_HEIGHT )
+        self.blue_button.pack(side = tk.LEFT)
 
         self.yellow_button = tk.Radiobutton(self.selection_frame, text='      ',value='yellow',
-                                          command=self.yellow_callback, bg='yellow',variable = self.selected_color)
-        self.yellow_button.pack()
+                                          command=self.yellow_callback, bg='yellow',variable = self.selected_color, height = BUTTON_HEIGHT )
+        self.yellow_button.pack(side = tk.LEFT)
 
         self.magenta_button = tk.Radiobutton(self.selection_frame, text='      ', value = 'magenta',
-                                            command = self.magenta_callback, bg = 'magenta', variable = self.selected_color )
+                                            command = self.magenta_callback, bg = 'magenta', variable = self.selected_color , height = BUTTON_HEIGHT )
         self.green_button = tk.Radiobutton(self.selection_frame, text='      ', value = 'green',
-                                            command = self.green_callback, bg = 'green', variable = self.selected_color )
-        self.magenta_button.pack()
-        self.green_button.pack()
+                                            command = self.green_callback, bg = 'green', variable = self.selected_color, height = BUTTON_HEIGHT )
+        self.magenta_button.pack(side = tk.LEFT)
+        self.green_button.pack(side = tk.LEFT)
+        
         self.selected_color.set(color)
         self.blue_callback()
-        self.slider = tk.Scale(self.selection_frame, from_=50, to_=250, command=self.slider_callback)
+        self.slider = tk.Scale(self.selection_frame, from_=50, to_=250, command=self.slider_callback, orient = tk.HORIZONTAL, length = 200, width = 25 )
         global threshold
         self.slider.set(threshold)
-        self.slider.pack()
-        self.selection_frame.pack()
+        self.slider.pack(side = tk.LEFT, expand = tk.YES)
+
+
+        self.selection_frame.pack(side = tk.TOP, expand =tk.YES)
 
     def slider_callback(self, value):
         global threshold
