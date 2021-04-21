@@ -673,13 +673,10 @@ class Wrapper:
             with shelve.open(filePath, 'c') as dataFile:
                 thresholdFlag = False 
                 colorFlag = False               
-                for x in dataFile.keys():
-                    if x == 'threshold':
-                        thresholdFlag = True
-                    elif x == 'color':
-                        colorFlag = True
-                
-
+                if not dataFile.keys().__contains__('color'):
+                    dataFile['color'] = color
+                if not dataFile.keys().__contains__('threshold'):
+                    dataFile['threshold'] = threshold
 
                 threshold = dataFile['threshold']
                 color = dataFile['color']
