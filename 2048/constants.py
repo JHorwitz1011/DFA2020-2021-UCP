@@ -22,7 +22,7 @@ CELL_COLOR_DICT = {2: "#776e65", 4: "#776e65", 8: "#f9f6f2", 16: "#f9f6f2",
                    4096: "#776e65", 8192: "#f9f6f2", 16384: "#776e65",
                    32768: "#776e65", 65536: "#f9f6f2", }
 
-FONT = ("Verdana", 40, "bold")
+FONT = ("Verdana", 30, "bold")
 
 KEY_UP_ALT = "\'\\uf700\'"
 KEY_DOWN_ALT = "\'\\uf701\'"

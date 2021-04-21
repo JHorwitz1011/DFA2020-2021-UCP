@@ -208,7 +208,8 @@ class RightView(tk.Frame):
         self.root = root
         #load all UI
         self.setup_ui()
-        
+        self['bg'] = 'white'
+
     def setup_ui(self):
         #create a webcam output label
         #EDIT
@@ -248,7 +249,7 @@ class RightView(tk.Frame):
         
         self.selected_color.set(color)
         self.blue_callback()
-        self.slider = tk.Scale(self.selection_frame, from_=50, to_=250, command=self.slider_callback, orient = tk.HORIZONTAL, length = 200, width = 25 )
+        self.slider = tk.Scale(self.selection_frame, bg = "white", highlightbackground = 'white' ,from_=50, to_=250, command=self.slider_callback, orient = tk.HORIZONTAL, length = 200, width = 25 )
         global threshold
         self.slider.set(threshold)
         self.slider.pack(side = tk.LEFT, expand = tk.YES)
@@ -319,6 +320,7 @@ class AppGui:
         self.root = tk.Tk()
         #set the geometry of the window
         #self.root.geometry("550x300+300+150")
+        self.root['bg'] = 'white'
         
         #set title of window
         self.root.title("Face Detection")
