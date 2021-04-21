@@ -9,9 +9,10 @@ from PIL import ImageTk
 import cv2
 import threading
 import queue
+import time
 
 import sys
-from tkinter import Frame, Label, CENTER
+from tkinter import Frame, Label, CENTER, Scale
 import random
 import keyboard 
 
@@ -24,17 +25,41 @@ from imutils.video import VideoStream
 import imutils
 import numpy as np
 
+# Data persistance
+import os
+import os.path 
+import shelve
+from pathlib import Path
+
+folderPath = os.path.join(Path.home(),"2048Vision")
+filePath = os.path.join(folderPath, "data")
+color = 'blue'
+
+
 WIN_SIZE = W = H =  700
 #H = (W // 4) * 3
 
 # define the lower and upper boundaries of the "green"
 # ball in the HSV color space, then initialize the
 # list of tracked points
-orangeLower = (0, 220, 158)
-orangeUpper = (12, 255, 255)
-#orangeLower = (0, 130, 130)
-#orangeUpper = (19, 255, 255)   
-   
+#orangeLower = (0, 220, 158)
+#orangeUpper = (12, 255, 255)
+colorUpper = (0,0,0)
+colorLower = (0,0,0)
+
+orangeLower = (0, 100, 100)
+orangeUpper = (25, 255, 255)   
+yellowLower= (0, 70, 190)
+yellowUpper= (85, 255, 255)   
+blueLower= (90,200, 0)
+blueUpper= (115, 255, 255)
+
+
+magentaLower = (87 ,132,136)
+magentaUpper = (179,255,255)
+greenLower = (40, 80, 80)
+greenUpper = (100, 255, 171)
+
 ###constants###   
 maxlen=10   
 threshold = 150 
@@ -48,6 +73,10 @@ pts = deque(maxlen=maxlen)
 last_input = False
 
 LINE_THICKNESS = 64
+
+## FPS
+delayFrame = False
+nextTime = 0
 
 # I have taken a more modular approach so that UI is easy to change, update and extend. I have also developed UI in a way so that UI has no knowledge of how data is fetched or processed, it is just a UI. 
 
@@ -181,15 +210,92 @@ class RightView(tk.Frame):
     def setup_ui(self):
         #create a webcam output label
         #EDIT
-        self.output_label = tk.Label(self, text="Aruco Tracking", bg="black", fg="white")
+
+        self.output_label = tk.Label(self, text="Color Ball Tracking", bg="white", fg="black")
         self.output_label.pack(side="top", fill="both", expand="yes", padx=10)
         
         #create label to hold image
         self.image_label = tk.Label(self)
         #put the image label inside left screen
         self.image_label.pack(side="left", fill="both", expand="yes", padx=10, pady=10)
+        self.selection_frame = tk.Frame(self,bg='white')
+
+        #color data
+        global color
+        self.selected_color = tk.StringVar()    #Tkinter needs this variable type for the buttons, seems to be an enum type
+ 
+        print("selected", self.selected_color)
+        self.orange_button = tk.Radiobutton(self.selection_frame, text='      ', value='orange',
+            command=self.orange_callback, bg='orange', variable = self.selected_color)
+        self.orange_button.pack()
         
-        
+        self.blue_button = tk.Radiobutton(self.selection_frame, text='      ',value='blue',
+                                          command=self.blue_callback, bg='blue',variable = self.selected_color)
+        self.blue_button.pack()
+
+        self.yellow_button = tk.Radiobutton(self.selection_frame, text='      ',value='yellow',
+                                          command=self.yellow_callback, bg='yellow',variable = self.selected_color)
+        self.yellow_button.pack()
+
+        self.magenta_button = tk.Radiobutton(self.selection_frame, text='      ', value = 'magenta',
+                                            command = self.magenta_callback, bg = 'magenta', variable = self.selected_color )
+        self.green_button = tk.Radiobutton(self.selection_frame, text='      ', value = 'green',
+                                            command = self.green_callback, bg = 'green', variable = self.selected_color )
+        self.magenta_button.pack()
+        self.green_button.pack()
+        self.selected_color.set(color)
+        self.blue_callback()
+        self.slider = tk.Scale(self.selection_frame, from_=50, to_=250, command=self.slider_callback)
+        global threshold
+        self.slider.set(threshold)
+        self.slider.pack()
+        self.selection_frame.pack()
+
+    def slider_callback(self, value):
+        global threshold
+        threshold = int(value)
+
+        with shelve.open(filePath) as dataFile:
+            dataFile['threshold'] = threshold
+            #dataFile['color'] = 'blue'         ###############################################
+
+        print('slider callback works', value, self)
+
+    def orange_callback(self):
+        global colorUpper, colorLower
+        colorUpper = orangeUpper
+        colorLower = orangeLower
+        with shelve.open(filePath) as dataFile:
+            dataFile['color'] = 'orange'
+    
+    def blue_callback(self):
+        global colorUpper, colorLower
+        colorUpper = blueUpper
+        colorLower = blueLower  
+        with shelve.open(filePath) as dataFile:
+            dataFile['color'] = 'blue'
+
+    def yellow_callback(self):
+        global colorUpper, colorLower
+        colorUpper = yellowUpper
+        colorLower = yellowLower 
+        with shelve.open(filePath) as dataFile:
+            dataFile['color'] = 'yellow'
+
+    def magenta_callback(self):
+        global colorLower,colorUpper
+        colorLower = magentaLower
+        colorUpper = magentaUpper
+        with shelve.open(filePath) as dataFile:
+            dataFile['color'] = 'magenta'
+
+    def green_callback(self):
+        global colorLower,colorUpper
+        colorLower = greenLower
+        colorUpper = greenUpper
+        with shelve.open(filePath) as dataFile:
+            dataFile['color'] = 'green'
+
     def update_image(self, image):
         #configure image_label with new image 
         self.image_label.configure(image=image)
@@ -245,7 +351,7 @@ class AppGui:
     def process_image(self, image):
         #resize image to desired width and height
         #image = image.resize((self.image_width, self.image_height),Image.ANTIALIAS)
-        image = cv2.resize(image, (self.image_width, self.image_height))
+        #image = cv2.resize(image, (self.image_width, self.image_height))
         
         #EDIT
         #image = cv2.flip(image, 1)
@@ -348,20 +454,20 @@ def press(input, key='a'):
 #function to detect Aruco with OpenCV
 def detect_color(img, points):
     #img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-
+    
     global cooldown
     if cooldown > 0:
         print(cooldown)
    
     # resize the img, blur it, and convert it to the HSV
     # color space
-    img = imutils.resize(img, width=600)
+    img = imutils.resize(img, width=600) 
     blurred = cv2.GaussianBlur(img, (11, 11), 0)
     hsv = cv2.cvtColor(blurred, cv2.COLOR_RGB2HSV)
     # construct a mask for the color "green", then perform
     # a series of dilations and erosions to remove any small
     # blobs left in the mask
-    mask = cv2.inRange(hsv, orangeLower, orangeUpper)
+    mask = cv2.inRange(hsv, colorLower, colorUpper)
     mask = cv2.erode(mask, None, iterations=2)
     mask = cv2.dilate(mask, None, iterations=2)
 
@@ -430,6 +536,14 @@ def detect_color(img, points):
                     cv2.line(img, pts[i - 1], pts[i], LINE_RED, thickness)
 
     img = cv2.flip(img, 1)
+
+    #Adjust Framerate
+    #frameRate = 1 / (time.time() - timeCheck) 
+    #print(frameRate)
+    #if(frameRate >30):
+    #    delayFrame = True   
+
+
     return img
 
     
@@ -513,6 +627,11 @@ class WebcamThread(threading.Thread):
 
 class Wrapper:
     def __init__(self):
+
+         #Data storage initiate first so GUI created with correct values
+        self.init_data()
+
+
         self.app_gui = AppGui()
         
         #create a Video camera instance
@@ -540,6 +659,26 @@ class Wrapper:
         #start fetching video
         self.fetch_webcam_video()
     
+    def init_data(self):
+        global threshold
+        global color
+
+        if(not os.path.exists(folderPath)):
+            os.makedirs(folderPath)
+        
+        if (not len(os.listdir(folderPath)) == 0):    
+            with shelve.open(filePath, 'c') as dataFile:
+                thresholdFlag = False 
+                colorFlag = False               
+                if not dataFile.keys().__contains__('color'):
+                    dataFile['color'] = color
+                if not dataFile.keys().__contains__('threshold'):
+                    dataFile['threshold'] = threshold
+
+                threshold = dataFile['threshold']
+                color = dataFile['color']
+                print(color)
+
     def on_gui_closing(self):
         self.webcam_attempts = 51
         self.webcam_thread.stop()
