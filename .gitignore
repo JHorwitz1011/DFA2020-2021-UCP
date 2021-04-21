@@ -1,6 +1,8 @@
 /.vscode
-/.vscode
-2048/__pycache__/constants.cpython-38.pyc
-2048/__pycache__/logic.cpython-38.pyc
-/.2048/__pycache__/**
+
+**/2048/__pycache__
+# Pyinstaller
+**/build/
+**/dist/
+2048/BallTrackingThreading.spec
 
