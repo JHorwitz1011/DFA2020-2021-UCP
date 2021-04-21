@@ -1,7 +1,7 @@
-SIZE = 400
+SIZE = 300
 GRID_LEN = 4
 GRID_PADDING = 10
-SQUARE_SIDE = 100
+SQUARE_SIDE = 75
 
 BACKGROUND_COLOR_GAME = "#92877d"
 BACKGROUND_COLOR_CELL_EMPTY = "#9e948a"
@@ -22,7 +22,7 @@ CELL_COLOR_DICT = {2: "#776e65", 4: "#776e65", 8: "#f9f6f2", 16: "#f9f6f2",
                    4096: "#776e65", 8192: "#f9f6f2", 16384: "#776e65",
                    32768: "#776e65", 65536: "#f9f6f2", }
 
-FONT = ("Verdana", 40, "bold")
+FONT = ("Verdana", 20, "bold")
 
 KEY_UP_ALT = "\'\\uf700\'"
 KEY_DOWN_ALT = "\'\\uf701\'"
