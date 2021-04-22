@@ -8,6 +8,11 @@
 import random
 
 import constants as c
+from playsound import playsound
+from pathlib import Path
+import os.path  
+
+tileSound = os.path.join(Path().absolute(),'Sounds','Tile.wav')
 
 #######
 # Task 1a #
@@ -158,9 +163,11 @@ def cover_up(mat):
 
 
 def merge(mat, done):
+    playsound(tileSound)
     for i in range(c.GRID_LEN):
         for j in range(c.GRID_LEN-1):
             if mat[i][j] == mat[i][j+1] and mat[i][j] != 0:
+                playsound(tileSound)
                 mat[i][j] *= 2
                 mat[i][j+1] = 0
                 done = True
