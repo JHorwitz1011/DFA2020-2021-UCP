@@ -115,7 +115,6 @@ class GameGrid(tk.Frame):
     # Restart
     def restart(self):
         global currentScore
-        logic.setCurrentScore(0)
         currentScore = 0
         RightView.setCurrentScore(wrapper.app_gui.right_view, currentScore)
 

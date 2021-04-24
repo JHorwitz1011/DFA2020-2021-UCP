@@ -15,7 +15,7 @@ import os.path
 tileSound = os.path.join(Path().absolute(),'Sounds','Tile.wav')
 
 # Scoring
-currentScore = 0
+score = 0
 
 #######
 # Task 1a #
@@ -36,7 +36,8 @@ def new_game(n):
     matrix = add_two(matrix)
 
     #Scoring
-    currentScore = 0
+    global score
+    score = 0
     return matrix
 
 ###########
@@ -178,8 +179,8 @@ def merge(mat, done):
                 mat[i][j+1] = 0
 
                 #Scoring: adds merged tile value
-                global currentScore
-                currentScore += mat[i][j]
+                global score
+                score += mat[i][j]
                 
                 done = True
     return mat, done
@@ -228,10 +229,5 @@ def right(game):
 
 # Scoring
 def getCurrentScore():
-    global currentScore
-    return currentScore
-
-def setCurrentScore(newScore):
-    global currentScore
-    currentScore = newScore
-
+    global score
+    return score
