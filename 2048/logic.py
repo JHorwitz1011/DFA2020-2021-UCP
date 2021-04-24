@@ -163,11 +163,11 @@ def cover_up(mat):
 
 
 def merge(mat, done):
-    playsound(tileSound)
+    playsound(tileSound, block = False)
     for i in range(c.GRID_LEN):
         for j in range(c.GRID_LEN-1):
             if mat[i][j] == mat[i][j+1] and mat[i][j] != 0:
-                playsound(tileSound)
+                playsound(tileSound, block = False)
                 mat[i][j] *= 2
                 mat[i][j+1] = 0
                 done = True
