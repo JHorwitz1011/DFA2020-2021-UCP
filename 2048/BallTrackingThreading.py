@@ -12,7 +12,7 @@ import queue
 import time
 
 import sys
-from tkinter import Frame, Label, CENTER, Scale
+from tkinter import Frame, Label, CENTER, Scale, Button
 import random
 import keyboard 
 
@@ -108,6 +108,11 @@ class GameGrid(tk.Frame):
         self.update_grid_cells()
 
         #self.mainloop()
+    def restart(self):
+        self.init_grid()
+        self.matrix = logic.new_game(c.GRID_LEN)
+        self.history_matrixs = []
+        self.update_grid_cells()
 
     def init_grid(self):
         background = Frame(self, bg=c.BACKGROUND_COLOR_GAME,
@@ -158,8 +163,8 @@ class GameGrid(tk.Frame):
                     self.grid_cells[1][1].configure(text="You", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
                     self.grid_cells[1][2].configure(text="Win!", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
                 if logic.game_state(self.matrix) == 'lose':
-                    self.grid_cells[1][1].configure(text="You", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
-                    self.grid_cells[1][2].configure(text="Lose!", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
+                    self.grid_cells[1][1].configure(text="Try", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
+                    self.grid_cells[1][2].configure(text="Again!", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
 
     def generate_next(self):
         index = (gen(), gen())
@@ -256,6 +261,17 @@ class RightView(tk.Frame):
 
 
         self.selection_frame.pack(side = tk.TOP, expand =tk.YES)
+
+
+        self.restart = tk.Button(self.selection_frame, text ="Restart", command = self.restartCallback)
+        self.restart.pack(side = tk.LEFT)
+
+
+    def restartCallback(self):
+        print("restart")
+        #GameGrid.restart(self.left_view.GameGrid)
+
+
 
     def slider_callback(self, value):
         global threshold
