@@ -35,6 +35,10 @@ folderPath = os.path.join(Path.home(),"2048Vision")
 filePath = os.path.join(folderPath, "data")
 color = 'blue'
 
+# Scoring
+currentScore = logic.getCurrentScore()
+highScore = 16
+
 # GUI
 BUTTON_HEIGHT = 2
 
@@ -108,8 +112,13 @@ class GameGrid(tk.Frame):
         self.update_grid_cells()
 
         #self.mainloop()
+    # Restart
     def restart(self):
-        self.init_grid()
+        global currentScore
+        logic.setCurrentScore(0)
+        currentScore = 0
+        RightView.setCurrentScore(wrapper.app_gui.right_view, currentScore)
+
         self.matrix = logic.new_game(c.GRID_LEN)
         self.history_matrixs = []
         self.update_grid_cells()
@@ -165,6 +174,15 @@ class GameGrid(tk.Frame):
                 if logic.game_state(self.matrix) == 'lose':
                     self.grid_cells[1][1].configure(text="Try", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
                     self.grid_cells[1][2].configure(text="Again!", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
+
+        # Scoring: runs even after loss or win
+        global currentScore
+        global highScore
+        currentScore = logic.getCurrentScore()
+        RightView.setCurrentScore(wrapper.app_gui.right_view, currentScore)
+        if(currentScore > highScore):
+            highScore = currentScore
+            RightView.setHighScore(wrapper.app_gui.right_view)
 
     def generate_next(self):
         index = (gen(), gen())
@@ -262,14 +280,31 @@ class RightView(tk.Frame):
 
         self.selection_frame.pack(side = tk.TOP, expand =tk.YES)
 
-
+        # Restart
         self.restart = tk.Button(self.selection_frame, text ="Restart", command = self.restartCallback)
         self.restart.pack(side = tk.LEFT)
 
 
+        # Scoring
+        global currentScore
+        global highScore
+
+        self.currentScoreLabel = tk.Label(self.selection_frame, text="Current Score: "+str(currentScore), bg="white", fg="black")
+        self.currentScoreLabel.pack(side=tk.BOTTOM, fill="both", expand="yes", padx=10)
+
+        self.highScoreLabel = tk.Label(self.selection_frame, text="High Score: "+str(highScore), bg="white", fg="black")
+        self.highScoreLabel.pack(side=tk.BOTTOM, fill="both", expand="yes", padx=10)
+
+    # Scoring
+    def setCurrentScore(self, value):
+        self.currentScoreLabel.config(text = "Current Score: "+str(value))
+    
+    def setHighScore(self):
+        self.highScoreLabel.config(text= "High Score: " + str(currentScore))
+
+    #Restart
     def restartCallback(self):
-        print("restart")
-        #GameGrid.restart(self.left_view.GameGrid)
+        GameGrid.restart(wrapper.app_gui.left_view)
 
 
 
