@@ -275,7 +275,20 @@ class RightView(tk.Frame):
         self.green_button.pack(side = tk.LEFT)
         
         self.selected_color.set(color)
-        self.blue_callback()
+
+        #shabby way to integrate color selection on start
+        if self.selected_color.get() == 'orange':
+            print('orange callback')
+            self.orange_callback()
+        elif self.selected_color.get() == 'green':
+            self.green_callback()
+        elif self.selected_color.get() == 'magenta':
+            self.magenta_callback()
+        elif self.selected_color.get() == 'yellow':
+            self.yellow_callback()
+        elif self.selected_color.get() == 'blue':
+            self.blue_callback()
+
         self.slider = tk.Scale(self.selection_frame, bg = "white", highlightbackground = 'white' ,from_=50, to_=250, command=self.slider_callback, orient = tk.HORIZONTAL, length = 200, width = 25 )
         global threshold
         self.slider.set(threshold)
