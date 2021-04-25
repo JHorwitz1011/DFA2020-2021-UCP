@@ -11,8 +11,13 @@ import constants as c
 from playsound import playsound
 from pathlib import Path
 import os.path  
+import shelve
 
-tileSound = os.path.join(Path().absolute(),'Sounds','Tile.wav')
+tileSound = os.path.join(Path().absolute(),'Sounds','Tile2.wav')
+
+#saving
+folderPath = os.path.join(Path.home(),"2048Vision")
+filePath = os.path.join(folderPath, "data")
 
 # Scoring
 score = 0
@@ -185,7 +190,6 @@ def merge(mat, done):
                 done = True
     return mat, done
 
-
 def up(game):
     print("up")
     # return matrix after shifting up
@@ -231,3 +235,22 @@ def right(game):
 def getCurrentScore():
     global score
     return score
+
+#Saving
+def save_game(matrix, hi_score, current_score):
+    with shelve.open(filePath) as dataFile:
+        dataFile['state'] = matrix
+        dataFile['hi_score'] = hi_score
+        dataFile['current_score'] = current_score
+
+#RETURNS MATRIX, HIGH SCORE, CURRENT SCORE
+def load_game():
+    with shelve.open(filePath) as dataFile:
+        keys = dataFile.keys()
+        if not keys.__contains__('state'):
+            dataFile['state'] = new_game(c.GRID_LEN)
+        if not keys.__contains__('current_score'):
+            dataFile['current_score'] = 0
+        if not keys.__contains__('hi_score'):
+            dataFile['hi_score'] = 0
+        return dataFile['state'], dataFile['hi_score'], dataFile['current_score']

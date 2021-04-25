@@ -107,7 +107,12 @@ class GameGrid(tk.Frame):
         
         self.grid_cells = []
         self.init_grid()
-        self.matrix = logic.new_game(c.GRID_LEN)
+
+        #saving
+        global highScore, currentScore
+        self.matrix, highScore, currentScore = logic.load_game()
+            
+
         self.history_matrixs = []
         self.update_grid_cells()
 
@@ -737,6 +742,10 @@ class Wrapper:
                 print(color)
 
     def on_gui_closing(self):
+        #saving
+        global highScore, currentScore
+        logic.save_game(self.app_gui.left_view.matrix, highScore, currentScore)
+
         self.webcam_attempts = 51
         self.webcam_thread.stop()
         self.webcam_thread.join()
