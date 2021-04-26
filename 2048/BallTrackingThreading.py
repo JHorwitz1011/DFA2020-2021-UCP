@@ -288,7 +288,7 @@ class RightView(tk.Frame):
         elif self.selected_color.get() == 'blue':
             self.blue_callback()
 
-        self.slider = tk.Scale(self.selection_frame, bg = c.BACKGROUND_COLOR_APP, highlightbackground = 'white' ,from_=50, to_=250, command=self.slider_callback, orient = tk.HORIZONTAL, length = 200, width = 25, fg='white' )
+        self.slider = tk.Scale(self.selection_frame, bg = c.BACKGROUND_COLOR_APP, highlightbackground = c.BACKGROUND_COLOR_APP ,from_=50, to_=250, command=self.slider_callback, orient = tk.HORIZONTAL, length = 200, width = 25, fg='white' )
         global threshold
         self.slider.set(threshold)
         self.slider.pack(side = tk.LEFT, expand = tk.YES)
