@@ -235,20 +235,20 @@ class RightView(tk.Frame):
         self.root = root
         #load all UI
         self.setup_ui()
-        self['bg'] = 'white'
+        self['bg'] = c.BACKGROUND_COLOR_APP
 
     def setup_ui(self):
         #create a webcam output label
         #EDIT
 
-        self.output_label = tk.Label(self, text="Color Ball Tracking", bg="white", fg="black")
+        self.output_label = tk.Label(self, text="Color Ball Tracking", bg=c.BACKGROUND_COLOR_APP, fg="white")
         self.output_label.pack(side=tk.TOP, fill="both", expand="yes", padx=10)
         
         #create label to hold image
         self.image_label = tk.Label(self)
         #put the image label inside left screen
         self.image_label.pack(side=tk.TOP, fill="both", expand="yes", padx=10, pady=10)
-        self.selection_frame = tk.Frame(self,bg='white')
+        self.selection_frame = tk.Frame(self,bg=c.BACKGROUND_COLOR_APP)
 
         #color data
         global color
@@ -278,7 +278,6 @@ class RightView(tk.Frame):
 
         #shabby way to integrate color selection on start
         if self.selected_color.get() == 'orange':
-            print('orange callback')
             self.orange_callback()
         elif self.selected_color.get() == 'green':
             self.green_callback()
@@ -289,7 +288,7 @@ class RightView(tk.Frame):
         elif self.selected_color.get() == 'blue':
             self.blue_callback()
 
-        self.slider = tk.Scale(self.selection_frame, bg = "white", highlightbackground = 'white' ,from_=50, to_=250, command=self.slider_callback, orient = tk.HORIZONTAL, length = 200, width = 25 )
+        self.slider = tk.Scale(self.selection_frame, bg = c.BACKGROUND_COLOR_APP, highlightbackground = 'white' ,from_=50, to_=250, command=self.slider_callback, orient = tk.HORIZONTAL, length = 200, width = 25, fg='white' )
         global threshold
         self.slider.set(threshold)
         self.slider.pack(side = tk.LEFT, expand = tk.YES)
@@ -306,10 +305,10 @@ class RightView(tk.Frame):
         global currentScore
         global highScore
 
-        self.currentScoreLabel = tk.Label(self.selection_frame, text="Current Score: "+str(currentScore), bg="white", fg="black")
+        self.currentScoreLabel = tk.Label(self.selection_frame, text="Current Score: "+str(currentScore), bg=c.BACKGROUND_COLOR_APP, fg="white")
         self.currentScoreLabel.pack(side=tk.BOTTOM, fill="both", expand="yes", padx=10)
 
-        self.highScoreLabel = tk.Label(self.selection_frame, text="High Score: "+str(highScore), bg="white", fg="black")
+        self.highScoreLabel = tk.Label(self.selection_frame, text="High Score: "+str(highScore), bg=c.BACKGROUND_COLOR_APP, fg="white")
         self.highScoreLabel.pack(side=tk.BOTTOM, fill="both", expand="yes", padx=10)
 
     # Scoring
@@ -388,7 +387,7 @@ class AppGui:
         self.root = tk.Tk()
         #set the geometry of the window
         #self.root.geometry("550x300+300+150")
-        self.root['bg'] = 'white'
+        self.root['bg'] = c.BACKGROUND_COLOR_APP
         
         #set title of window
         self.root.title("Face Detection")
