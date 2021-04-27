@@ -13,7 +13,7 @@ from pathlib import Path
 import os.path  
 import shelve
 
-tileSound = os.path.join(Path().absolute(),'Sounds','Tile.wav')
+tileSound = os.path.join(Path().absolute(),'Sounds','CSharp.wav')
 
 #saving
 folderPath = os.path.join(Path.home(),"2048Vision")

@@ -19,10 +19,11 @@ BACKGROUND_COLOR_DICT = {2: "#eee4da", 4: "#ede0c8", 8: "#f2b179",
 """
 BACKGROUND_COLOR_DICT = {2: "#FFFF00", 4: "#FF0000", 8: "#FF00FF",
                          16: "#9900FF", 32: "#f67c5f", 64: "#00FFFF",
-                         128: "#00FF00", 256: "#ee8e3b", 512: "#edc850",
+                         128: "#00FF00", 256: "#ee8e3b", 512: "#2643ff",
                          1024: "#edc53f", 2048: "#edc22e",
+                         #8192 and up are unchanged from original colors
 
-                         4096: "#eee4da", 8192: "#edc22e", 16384: "#f2b179",
+                         4096: "#bef029", 8192: "#edc22e", 16384: "#f2b179",
                          32768: "#f59563", 65536: "#f67c5f", }
 
 """
