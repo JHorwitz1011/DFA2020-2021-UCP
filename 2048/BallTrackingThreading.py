@@ -214,11 +214,11 @@ class GameGrid(tk.Frame):
             highScore = currentScore
             RightView.setHighScore(wrapper.app_gui.right_view)
 
-    def generate_next(self):
-        index = (gen(), gen())
-        while self.matrix[index[0]][index[1]] != 0:
-            index = (gen(), gen())
-        self.matrix[index[0]][index[1]] = 2
+    # def generate_next(self):
+    #     index = (gen(), gen())
+    #     while self.matrix[index[0]][index[1]] != 0:
+    #         index = (gen(), gen())
+    #     self.matrix[index[0]][index[1]] = 2
 
 # In[3]:
 
@@ -547,7 +547,7 @@ def press(input, key='a'):
         global last_input
         if input and not last_input:
                 keyboard.press_and_release(key)
-                cooldown = 50
+                cooldown = 10
         last_input = input
 
 def detect_marker(img, points):
@@ -582,44 +582,44 @@ def detect_marker(img, points):
 
             pts.appendleft(center)
 
-    if(len(pts) == maxlen and pts[maxlen-1] is not None and pts[0] is not None):
-            #print('left:', pts[0])
-            #print('right:', pts[maxlen-1])
-            xdif = pts[maxlen-1][0] - pts[0][0]
-            #print('xdif:', xdif)
-            ydif = pts[maxlen-1][1] - pts[0][1]
-            #print('ydif:', ydif)
-            if xdif > threshold:
-                    print('RIGHT')
-                    press(True, key='d')
-            elif xdif < -1 * threshold:
-                    print('LEFT')
-                    press(True, key='a')
-            elif ydif > threshold:
-                    print('UP')
-                    press(True, key='w')
-            elif ydif < -1 * threshold:
-                    print('DOWN')
-                    press(True, key='s')
-            else:
-                    press(False)
+        if(len(pts) == maxlen and pts[maxlen-1] is not None and pts[0] is not None):
+                #print('left:', pts[0])
+                #print('right:', pts[maxlen-1])
+                xdif = pts[maxlen-1][0] - pts[0][0]
+                #print('xdif:', xdif)
+                ydif = pts[maxlen-1][1] - pts[0][1]
+                #print('ydif:', ydif)
+                if xdif > threshold:
+                        print('RIGHT')
+                        press(True, key='d')
+                elif xdif < -1 * threshold:
+                        print('LEFT')
+                        press(True, key='a')
+                elif ydif > threshold:
+                        print('UP')
+                        press(True, key='w')
+                elif ydif < -1 * threshold:
+                        print('DOWN')
+                        press(True, key='s')
+                else:
+                        press(False)
 
 
         # loop over the set of tracked points
-    for i in range(1, len(pts)):
-            # if either of the tracked points are None, ignore
-            # them
-            if pts[i - 1] is None or pts[i] is None:
-                    continue
-            # otherwise, compute the thickness of the line and
-            # draw the connecting lines
-            thickness = int(np.sqrt(LINE_THICKNESS/ float(i + 1)) * 2.5)
-            if last_input or cooldown > 0:
-                    cv2.line(img, pts[i - 1], pts[i], LINE_GREEN, thickness)
-                    if cooldown > 0:
-                            cooldown -= 1
-            else:
-                    cv2.line(img, pts[i - 1], pts[i], LINE_RED, thickness)
+        for i in range(1, len(pts)):
+                # if either of the tracked points are None, ignore
+                # them
+                if pts[i - 1] is None or pts[i] is None:
+                        continue
+                # otherwise, compute the thickness of the line and
+                # draw the connecting lines
+                thickness = int(np.sqrt(LINE_THICKNESS/ float(i + 1)) * 2.5)
+                if last_input or cooldown > 0:
+                        cv2.line(img, pts[i - 1], pts[i], LINE_GREEN, thickness)
+                        if cooldown > 0:
+                                cooldown -= 1
+                else:
+                        cv2.line(img, pts[i - 1], pts[i], LINE_RED, thickness)
     img = cv2.flip(img, 1) 
     return img
 
