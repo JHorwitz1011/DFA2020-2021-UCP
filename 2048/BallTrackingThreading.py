@@ -547,7 +547,7 @@ def press(input, key='a'):
         global last_input
         if input and not last_input:
                 keyboard.press_and_release(key)
-                cooldown = 10
+                cooldown = 50
         last_input = input
 
 def detect_marker(img, points):
@@ -590,16 +590,12 @@ def detect_marker(img, points):
                 ydif = pts[maxlen-1][1] - pts[0][1]
                 #print('ydif:', ydif)
                 if xdif > threshold:
-                        print('RIGHT')
                         press(True, key='d')
                 elif xdif < -1 * threshold:
-                        print('LEFT')
                         press(True, key='a')
                 elif ydif > threshold:
-                        print('UP')
                         press(True, key='w')
                 elif ydif < -1 * threshold:
-                        print('DOWN')
                         press(True, key='s')
                 else:
                         press(False)
