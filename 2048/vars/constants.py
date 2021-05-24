@@ -59,3 +59,12 @@ KEY_J = "'j'"
 KEY_K = "'k'"
 KEY_L = "'l'"
 KEY_H = "'h'"
+
+#refactoring
+import os
+import os.path
+from pathlib import Path
+
+folderPath = os.path.join(Path.home(),"2048Vision")
+filePath = os.path.join(folderPath, "data")
+

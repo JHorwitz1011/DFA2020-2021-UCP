@@ -17,7 +17,6 @@ import random
 import keyboard 
 
 import logic
-import constants as c
 
 # Ball Tracking
 from collections import deque
@@ -31,9 +30,12 @@ import os.path
 import shelve
 from pathlib import Path
 
-folderPath = os.path.join(Path.home(),"2048Vision")
-filePath = os.path.join(folderPath, "data")
-color = 'blue'
+#refactoring
+import vars.config as cfg
+import vars.constants as c
+
+
+
 
 # Scoring
 currentScore = logic.getCurrentScore()
@@ -41,7 +43,6 @@ highScore = 16
 
 # GUI
 BUTTON_HEIGHT = 2
-
 WIN_SIZE = W = H =  700
 #H = (W // 4) * 3
 
@@ -274,7 +275,7 @@ class RightView(tk.Frame):
         self.magenta_button.pack(side = tk.LEFT)
         self.green_button.pack(side = tk.LEFT)
         
-        self.selected_color.set(color)
+        self.selected_color.set(cfg.color)
 
         #shabby way to integrate color selection on start
         if self.selected_color.get() == 'orange':
@@ -328,7 +329,7 @@ class RightView(tk.Frame):
         global threshold
         threshold = int(value)
 
-        with shelve.open(filePath) as dataFile:
+        with shelve.open(c.filePath) as dataFile:
             dataFile['threshold'] = threshold
             #dataFile['color'] = 'blue'         ###############################################
 
@@ -338,35 +339,35 @@ class RightView(tk.Frame):
         global colorUpper, colorLower
         colorUpper = orangeUpper
         colorLower = orangeLower
-        with shelve.open(filePath) as dataFile:
+        with shelve.open(c.filePath) as dataFile:
             dataFile['color'] = 'orange'
     
     def blue_callback(self):
         global colorUpper, colorLower
         colorUpper = blueUpper
         colorLower = blueLower  
-        with shelve.open(filePath) as dataFile:
+        with shelve.open(c.filePath) as dataFile:
             dataFile['color'] = 'blue'
 
     def yellow_callback(self):
         global colorUpper, colorLower
         colorUpper = yellowUpper
         colorLower = yellowLower 
-        with shelve.open(filePath) as dataFile:
+        with shelve.open(c.filePath) as dataFile:
             dataFile['color'] = 'yellow'
 
     def magenta_callback(self):
         global colorLower,colorUpper
         colorLower = magentaLower
         colorUpper = magentaUpper
-        with shelve.open(filePath) as dataFile:
+        with shelve.open(c.filePath) as dataFile:
             dataFile['color'] = 'magenta'
 
     def green_callback(self):
         global colorLower,colorUpper
         colorLower = greenLower
         colorUpper = greenUpper
-        with shelve.open(filePath) as dataFile:
+        with shelve.open(c.filePath) as dataFile:
             dataFile['color'] = 'green'
 
     def update_image(self, image):
@@ -737,21 +738,21 @@ class Wrapper:
         global threshold
         global color
 
-        if(not os.path.exists(folderPath)):
-            os.makedirs(folderPath)
+        if(not os.path.exists(c.folderPath)):
+            os.makedirs(c.folderPath)
         
-        if (not len(os.listdir(folderPath)) == 0):    
-            with shelve.open(filePath, 'c') as dataFile:
+        if (not len(os.listdir(c.folderPath)) == 0):    
+            with shelve.open(c.filePath, 'c') as dataFile:
                 thresholdFlag = False 
                 colorFlag = False               
                 if not dataFile.keys().__contains__('color'):
-                    dataFile['color'] = color
+                    dataFile['color'] = cfg.color
                 if not dataFile.keys().__contains__('threshold'):
                     dataFile['threshold'] = threshold
 
                 threshold = dataFile['threshold']
-                color = dataFile['color']
-                print(color)
+                cfg.color = dataFile['color']
+                print(cfg.color)
 
     def on_gui_closing(self):
         #saving
@@ -821,8 +822,6 @@ class Wrapper:
 
 # In[10]:
 
-# if __name__ == "__main__":
-
-
-wrapper = Wrapper()
-wrapper.launch()
+if __name__ == "__main__":
+    wrapper = Wrapper()
+    wrapper.launch()
