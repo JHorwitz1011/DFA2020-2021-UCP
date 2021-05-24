@@ -47,18 +47,18 @@ import vars.constants as c
 #orangeLower = (0, 220, 158)
 #orangeUpper = (12, 255, 255)
 
-orangeLower = (0, 100, 100)
-orangeUpper = (25, 255, 255)   
-yellowLower= (0, 70, 190)
-yellowUpper= (85, 255, 255)   
-blueLower= (90,200, 0)
-blueUpper= (115, 255, 255)
+# orangeLower = (0, 100, 100)
+# orangeUpper = (25, 255, 255)   
+# yellowLower= (0, 70, 190)
+# yellowUpper= (85, 255, 255)   
+# blueLower= (90,200, 0)
+# blueUpper= (115, 255, 255)
 
 
-magentaLower = (87 ,132,136)
-magentaUpper = (179,255,255)
-greenLower = (40, 80, 80)
-greenUpper = (100, 255, 171)
+# magentaLower = (87 ,132,136)
+# magentaUpper = (179,255,255)
+# greenLower = (40, 80, 80)
+# greenUpper = (100, 255, 171)
 
 ###constants###   
 maxlen=10   
@@ -268,15 +268,15 @@ class RightView(tk.Frame):
 
         #shabby way to integrate color selection on start
         if self.selected_color.get() == 'orange':
-            self.button_callback('orange')
+            self.selected_color.set('orange')
         elif self.selected_color.get() == 'green':
-            self.button_callback('green')
+            self.selected_color.set('green')
         elif self.selected_color.get() == 'magenta':
-            self.button_callback('magenta')
+            self.selected_color.set('magenta')
         elif self.selected_color.get() == 'yellow':
-            self.button_callback('yellow')
+            self.selected_color.set('yellow')
         elif self.selected_color.get() == 'blue':
-            self.button_callback('blue')
+            self.selected_color.set('blue')
 
         self.slider = tk.Scale(self.selection_frame, bg = c.BACKGROUND_COLOR_APP, highlightbackground = c.BACKGROUND_COLOR_APP ,from_=50, to_=250, command=self.slider_callback, orient = tk.HORIZONTAL, length = 200, width = 25, fg='white' )
         global threshold
@@ -327,7 +327,7 @@ class RightView(tk.Frame):
         cfg.colorUpper = c.color_presets[self.selected_color.get() + "Upper"]
         cfg.colorLower = c.color_presets[self.selected_color.get() + "Lower"]
         with shelve.open(c.filePath) as dataFile:
-            dataFile['color'] = cfg.color
+            dataFile['color'] = self.selected_color.get()
 
     def update_image(self, image):
         #configure image_label with new image 
