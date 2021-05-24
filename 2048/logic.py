@@ -7,7 +7,7 @@
 # code easily while grading your problem set.
 import random
 
-import constants as c
+import vars.constants as c
 from playsound import playsound
 from pathlib import Path
 import os.path  

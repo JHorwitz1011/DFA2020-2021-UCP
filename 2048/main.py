@@ -34,16 +34,11 @@ from pathlib import Path
 import vars.config as cfg
 import vars.constants as c
 
-
-
-
 # Scoring
-currentScore = logic.getCurrentScore()
-highScore = 16
+#currentScore = logic.getCurrentScore()
+#highScore = 16
 
 # GUI
-BUTTON_HEIGHT = 2
-WIN_SIZE = W = H =  700
 #H = (W // 4) * 3
 
 # define the lower and upper boundaries of the "green"
@@ -51,8 +46,6 @@ WIN_SIZE = W = H =  700
 # list of tracked points
 #orangeLower = (0, 220, 158)
 #orangeUpper = (12, 255, 255)
-colorUpper = (0,0,0)
-colorLower = (0,0,0)
 
 orangeLower = (0, 100, 100)
 orangeUpper = (25, 255, 255)   
@@ -110,8 +103,7 @@ class GameGrid(tk.Frame):
         self.init_grid()
 
         #saving
-        global highScore, currentScore
-        self.matrix, highScore, currentScore = logic.load_game()
+        self.matrix, cfg.highScore, cfg.currentScore = logic.load_game()
             
 
         self.history_matrixs = []
@@ -120,9 +112,8 @@ class GameGrid(tk.Frame):
         #self.mainloop()
     # Restart
     def restart(self):
-        global currentScore
-        currentScore = 0
-        RightView.setCurrentScore(wrapper.app_gui.right_view, currentScore)
+        cfg.currentScore = 0
+        RightView.setCurrentScore(wrapper.app_gui.right_view, cfg.currentScore)
 
         self.matrix = logic.new_game(c.GRID_LEN)
         self.history_matrixs = []
@@ -181,12 +172,10 @@ class GameGrid(tk.Frame):
                     self.grid_cells[1][2].configure(text="Again!", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
 
         # Scoring: runs even after loss or win
-        global currentScore
-        global highScore
-        currentScore = logic.getCurrentScore()
-        RightView.setCurrentScore(wrapper.app_gui.right_view, currentScore)
-        if(currentScore > highScore):
-            highScore = currentScore
+        cfg.currentScore = logic.getCurrentScore()
+        RightView.setCurrentScore(wrapper.app_gui.right_view, cfg.currentScore)
+        if(cfg.currentScore > cfg.highScore):
+            cfg.highScore = cfg.currentScore
             RightView.setHighScore(wrapper.app_gui.right_view)
 
     def generate_next(self):
@@ -257,21 +246,21 @@ class RightView(tk.Frame):
  
         print("selected", self.selected_color)
         self.orange_button = tk.Radiobutton(self.selection_frame, text='      ', value='orange',
-            command=self.orange_callback, bg='orange', variable = self.selected_color, height = BUTTON_HEIGHT )
+                                            command=self.button_callback, bg='orange', variable = self.selected_color, height = c.BUTTON_HEIGHT )
         self.orange_button.pack(side = tk.LEFT)
         
         self.blue_button = tk.Radiobutton(self.selection_frame, text='      ',value='blue',
-                                          command=self.blue_callback, bg='blue',variable = self.selected_color, height = BUTTON_HEIGHT )
+                                            command=self.button_callback, bg='blue',variable = self.selected_color, height = c.BUTTON_HEIGHT )
         self.blue_button.pack(side = tk.LEFT)
 
         self.yellow_button = tk.Radiobutton(self.selection_frame, text='      ',value='yellow',
-                                          command=self.yellow_callback, bg='yellow',variable = self.selected_color, height = BUTTON_HEIGHT )
+                                            command=self.button_callback, bg='yellow',variable = self.selected_color, height = c.BUTTON_HEIGHT )
         self.yellow_button.pack(side = tk.LEFT)
 
         self.magenta_button = tk.Radiobutton(self.selection_frame, text='      ', value = 'magenta',
-                                            command = self.magenta_callback, bg = 'magenta', variable = self.selected_color , height = BUTTON_HEIGHT )
+                                            command = self.button_callback, bg = 'magenta', variable = self.selected_color , height = c.BUTTON_HEIGHT )
         self.green_button = tk.Radiobutton(self.selection_frame, text='      ', value = 'green',
-                                            command = self.green_callback, bg = 'green', variable = self.selected_color, height = BUTTON_HEIGHT )
+                                            command = self.button_callback, bg = 'green', variable = self.selected_color, height = c.BUTTON_HEIGHT )
         self.magenta_button.pack(side = tk.LEFT)
         self.green_button.pack(side = tk.LEFT)
         
@@ -279,15 +268,15 @@ class RightView(tk.Frame):
 
         #shabby way to integrate color selection on start
         if self.selected_color.get() == 'orange':
-            self.orange_callback()
+            self.button_callback('orange')
         elif self.selected_color.get() == 'green':
-            self.green_callback()
+            self.button_callback('green')
         elif self.selected_color.get() == 'magenta':
-            self.magenta_callback()
+            self.button_callback('magenta')
         elif self.selected_color.get() == 'yellow':
-            self.yellow_callback()
+            self.button_callback('yellow')
         elif self.selected_color.get() == 'blue':
-            self.blue_callback()
+            self.button_callback('blue')
 
         self.slider = tk.Scale(self.selection_frame, bg = c.BACKGROUND_COLOR_APP, highlightbackground = c.BACKGROUND_COLOR_APP ,from_=50, to_=250, command=self.slider_callback, orient = tk.HORIZONTAL, length = 200, width = 25, fg='white' )
         global threshold
@@ -303,13 +292,11 @@ class RightView(tk.Frame):
 
 
         # Scoring
-        global currentScore
-        global highScore
 
-        self.currentScoreLabel = tk.Label(self.selection_frame, text="Current Score: "+str(currentScore), bg=c.BACKGROUND_COLOR_APP, fg="white")
+        self.currentScoreLabel = tk.Label(self.selection_frame, text="Current Score: "+str(cfg.currentScore), bg=c.BACKGROUND_COLOR_APP, fg="white")
         self.currentScoreLabel.pack(side=tk.BOTTOM, fill="both", expand="yes", padx=10)
 
-        self.highScoreLabel = tk.Label(self.selection_frame, text="High Score: "+str(highScore), bg=c.BACKGROUND_COLOR_APP, fg="white")
+        self.highScoreLabel = tk.Label(self.selection_frame, text="High Score: "+str(cfg.highScore), bg=c.BACKGROUND_COLOR_APP, fg="white")
         self.highScoreLabel.pack(side=tk.BOTTOM, fill="both", expand="yes", padx=10)
 
     # Scoring
@@ -317,7 +304,7 @@ class RightView(tk.Frame):
         self.currentScoreLabel.config(text = "Current Score: "+str(value))
     
     def setHighScore(self):
-        self.highScoreLabel.config(text= "High Score: " + str(currentScore))
+        self.highScoreLabel.config(text= "High Score: " + str(cfg.currentScore))
 
     #Restart
     def restartCallback(self):
@@ -335,40 +322,12 @@ class RightView(tk.Frame):
 
         print('slider callback works', value, self)
 
-    def orange_callback(self):
-        global colorUpper, colorLower
-        colorUpper = orangeUpper
-        colorLower = orangeLower
+    def button_callback(self):
+        #string manipulation with a dictionary to get around having a large amount of callback methods
+        cfg.colorUpper = c.color_presets[self.selected_color.get() + "Upper"]
+        cfg.colorLower = c.color_presets[self.selected_color.get() + "Lower"]
         with shelve.open(c.filePath) as dataFile:
-            dataFile['color'] = 'orange'
-    
-    def blue_callback(self):
-        global colorUpper, colorLower
-        colorUpper = blueUpper
-        colorLower = blueLower  
-        with shelve.open(c.filePath) as dataFile:
-            dataFile['color'] = 'blue'
-
-    def yellow_callback(self):
-        global colorUpper, colorLower
-        colorUpper = yellowUpper
-        colorLower = yellowLower 
-        with shelve.open(c.filePath) as dataFile:
-            dataFile['color'] = 'yellow'
-
-    def magenta_callback(self):
-        global colorLower,colorUpper
-        colorLower = magentaLower
-        colorUpper = magentaUpper
-        with shelve.open(c.filePath) as dataFile:
-            dataFile['color'] = 'magenta'
-
-    def green_callback(self):
-        global colorLower,colorUpper
-        colorLower = greenLower
-        colorUpper = greenUpper
-        with shelve.open(c.filePath) as dataFile:
-            dataFile['color'] = 'green'
+            dataFile['color'] = cfg.color
 
     def update_image(self, image):
         #configure image_label with new image 
@@ -406,8 +365,8 @@ class AppGui:
         #define image width/height that we will use
         #while showing an image in webcam/neural network
         #output window
-        self.image_width=WIN_SIZE
-        self.image_height=WIN_SIZE
+        self.image_width = c.WIN_SIZE
+        self.image_height = c.WIN_SIZE
         
         #define the center of the cirlce based on image dimentions
         #this is the cirlce we will use for user focus
@@ -542,7 +501,7 @@ def detect_color(img, points):
     # construct a mask for the color "green", then perform
     # a series of dilations and erosions to remove any small
     # blobs left in the mask
-    mask = cv2.inRange(hsv, colorLower, colorUpper)
+    mask = cv2.inRange(hsv, cfg.colorLower, cfg.colorUpper)
     mask = cv2.erode(mask, None, iterations=2)
     mask = cv2.dilate(mask, None, iterations=2)
 
@@ -579,16 +538,12 @@ def detect_color(img, points):
             ydif = pts[maxlen-1][1] - pts[0][1]
             #print('ydif:', ydif)
             if xdif > threshold:
-                    print('RIGHT')
                     press(True, key='d')
             elif xdif < -1 * threshold:
-                    print('LEFT')
                     press(True, key='a')
             elif ydif > threshold:
-                    print('UP')
                     press(True, key='w')
             elif ydif < -1 * threshold:
-                    print('DOWN')
                     press(True, key='s')
             else:
                     press(False)
@@ -756,8 +711,7 @@ class Wrapper:
 
     def on_gui_closing(self):
         #saving
-        global highScore, currentScore
-        logic.save_game(self.app_gui.left_view.matrix, highScore, currentScore)
+        logic.save_game(self.app_gui.left_view.matrix, cfg.highScore, cfg.currentScore)
 
         self.webcam_attempts = 51
         self.webcam_thread.stop()
