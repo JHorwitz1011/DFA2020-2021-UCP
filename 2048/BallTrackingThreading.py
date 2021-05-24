@@ -84,6 +84,32 @@ LINE_THICKNESS = 64
 delayFrame = False
 nextTime = 0
 
+##Tracking
+TAG_TYPE = "DICT_ARUCO_ORIGINAL"
+ARUCO_DICT = {
+    "DICT_4X4_50": cv2.aruco.DICT_4X4_50,
+    "DICT_4X4_100": cv2.aruco.DICT_4X4_100,
+    "DICT_4X4_250": cv2.aruco.DICT_4X4_250,
+    "DICT_4X4_1000": cv2.aruco.DICT_4X4_1000,
+    "DICT_5X5_50": cv2.aruco.DICT_5X5_50,
+    "DICT_5X5_100": cv2.aruco.DICT_5X5_100,
+    "DICT_5X5_250": cv2.aruco.DICT_5X5_250,
+    "DICT_5X5_1000": cv2.aruco.DICT_5X5_1000,
+    "DICT_6X6_50": cv2.aruco.DICT_6X6_50,
+    "DICT_6X6_100": cv2.aruco.DICT_6X6_100,
+    "DICT_6X6_250": cv2.aruco.DICT_6X6_250,
+    "DICT_6X6_1000": cv2.aruco.DICT_6X6_1000,
+    "DICT_7X7_50": cv2.aruco.DICT_7X7_50,
+    "DICT_7X7_100": cv2.aruco.DICT_7X7_100,
+    "DICT_7X7_250": cv2.aruco.DICT_7X7_250,
+    "DICT_7X7_1000": cv2.aruco.DICT_7X7_1000,
+    "DICT_ARUCO_ORIGINAL": cv2.aruco.DICT_ARUCO_ORIGINAL,
+    "DICT_APRILTAG_16h5": cv2.aruco.DICT_APRILTAG_16h5,
+    "DICT_APRILTAG_25h9": cv2.aruco.DICT_APRILTAG_25h9,
+    "DICT_APRILTAG_36h10": cv2.aruco.DICT_APRILTAG_36h10,
+    "DICT_APRILTAG_36h11": cv2.aruco.DICT_APRILTAG_36h11
+}
+
 # I have taken a more modular approach so that UI is easy to change, update and extend. I have also developed UI in a way so that UI has no knowledge of how data is fetched or processed, it is just a UI. 
 
 # ## Left Screen Views
@@ -524,6 +550,80 @@ def press(input, key='a'):
                 cooldown = 50
         last_input = input
 
+def detect_marker(img, points):
+    global cooldown
+    if cooldown > 0:
+        print(cooldown)
+
+    arucoDict = cv2.aruco.Dictionary_get(ARUCO_DICT[TAG_TYPE])
+    arucoParams = cv2.aruco.DetectorParameters_create()
+
+    (corners, ids, rejected) = cv2.aruco.detectMarkers(img, arucoDict, parameters = arucoParams)
+    cv2.aruco.drawDetectedMarkers(img,corners,ids,(0,255,0))
+
+    
+
+    if len(corners) > 0:
+        ids = ids.flatten()
+
+        for (markerCorner, markerID) in zip(corners, ids):
+            corners = markerCorner.reshape((4,2))
+            (topLeft, topRight, bottomRight, bottomLeft) = corners
+
+            topRight = (int(topRight[0]), int(topRight[1]))
+            bottomRight = (int(bottomRight[0]), int(bottomRight[1]))
+            bottomLeft = (int(bottomLeft[0]), int(bottomLeft[1]))
+            topLeft = (int(topLeft[0]), int(topLeft[1]))
+            
+            # compute the center (x, y)-coordinates of the ArUco marker
+            cX = int((topLeft[0] + bottomRight[0]) / 2.0)
+            cY = int((topLeft[1] + bottomRight[1]) / 2.0)
+            center = (cX,cY)
+
+            pts.appendleft(center)
+
+    if(len(pts) == maxlen and pts[maxlen-1] is not None and pts[0] is not None):
+            #print('left:', pts[0])
+            #print('right:', pts[maxlen-1])
+            xdif = pts[maxlen-1][0] - pts[0][0]
+            #print('xdif:', xdif)
+            ydif = pts[maxlen-1][1] - pts[0][1]
+            #print('ydif:', ydif)
+            if xdif > threshold:
+                    print('RIGHT')
+                    press(True, key='d')
+            elif xdif < -1 * threshold:
+                    print('LEFT')
+                    press(True, key='a')
+            elif ydif > threshold:
+                    print('UP')
+                    press(True, key='w')
+            elif ydif < -1 * threshold:
+                    print('DOWN')
+                    press(True, key='s')
+            else:
+                    press(False)
+
+
+        # loop over the set of tracked points
+    for i in range(1, len(pts)):
+            # if either of the tracked points are None, ignore
+            # them
+            if pts[i - 1] is None or pts[i] is None:
+                    continue
+            # otherwise, compute the thickness of the line and
+            # draw the connecting lines
+            thickness = int(np.sqrt(LINE_THICKNESS/ float(i + 1)) * 2.5)
+            if last_input or cooldown > 0:
+                    cv2.line(img, pts[i - 1], pts[i], LINE_GREEN, thickness)
+                    if cooldown > 0:
+                            cooldown -= 1
+            else:
+                    cv2.line(img, pts[i - 1], pts[i], LINE_RED, thickness)
+    img = cv2.flip(img, 1) 
+    return img
+
+
 #EDIT
 #function to detect Aruco with OpenCV
 def detect_color(img, points):
@@ -680,7 +780,7 @@ class WebcamThread(threading.Thread):
         #app_gui.update_webcam_output(current_frame)
         #face = detect_face(current_frame)
         #EDIT
-        face = detect_color(current_frame, pts)
+        face = detect_marker(current_frame, pts)
         app_gui.update_neural_network_output(face)
         
     def __del__(self):

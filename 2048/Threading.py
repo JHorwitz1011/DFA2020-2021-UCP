@@ -54,6 +54,9 @@ ARUCO_DICT = {
     "DICT_APRILTAG_36h10": cv2.aruco.DICT_APRILTAG_36h10,
     "DICT_APRILTAG_36h11": cv2.aruco.DICT_APRILTAG_36h11
 }
+
+def gen():
+    return random.randint(0, c.GRID_LEN - 1)
 # I have taken a more modular approach so that UI is easy to change, update and extend. I have also developed UI in a way so that UI has no knowledge of how data is fetched or processed, it is just a UI. 
 
 # ## Left Screen Views
