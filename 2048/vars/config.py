@@ -1,6 +1,5 @@
 import vars.constants as c
 from collections import deque
-from gui.Wrapper import Wrapper
 
 # Saving
 color = 'blue'               # stores current tracking color value. defaults to blue

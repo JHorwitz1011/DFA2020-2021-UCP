@@ -1,7 +1,7 @@
 import tkinter as tk
 import vars.constants as c
 import vars.config as cfg
-from gui import GameGrid
+#from gui.GameGrid import *
 import shelve
 
 class RightView(tk.Frame):
@@ -93,6 +93,9 @@ class RightView(tk.Frame):
 
     #Restart
     def restartCallback(self):
+
+        # yikes. required to avoid a cyclic import error if import is placed at the top of the file
+        from gui.GameGrid import GameGrid
         GameGrid.restart(cfg.wrapper.app_gui.left_view)
 
 
