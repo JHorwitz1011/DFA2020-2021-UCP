@@ -66,10 +66,16 @@ KEY_H = "'h'"
 BUTTON_HEIGHT = 2
 WIN_SIZE = W = H =  700
 
+#TRACKING GUI CONSTANTS
+maxlen = 10   
+LINE_RED = (0, 0, 255) #actually not red tho ;p
+LINE_GREEN = (0, 255, 0)
+LINE_THICKNESS = 64
 
 import os
 import os.path
 from pathlib import Path
+
 
 #file locations
 folderPath = os.path.join(Path.home(),"2048Vision")
@@ -88,3 +94,4 @@ color_presets = {
     "greenLower":(40, 80, 80),
     "greenUpper":(100, 255, 171),
 }
+

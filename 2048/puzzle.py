@@ -2,7 +2,7 @@ from tkinter import Frame, Label, CENTER
 import random
 
 import logic
-import constants as c
+import vars.constants as c
 
 def gen():
     return random.randint(0, c.GRID_LEN - 1)
