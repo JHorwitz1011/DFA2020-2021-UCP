@@ -1,5 +1,7 @@
-#GUI CONFIGURATION
+import os
+from pathlib import Path
 
+#GUI CONFIGURATION
 SIZE = 400
 GRID_LEN = 4
 GRID_PADDING = 10
@@ -62,26 +64,21 @@ KEY_K = "'k'"
 KEY_L = "'l'"
 KEY_H = "'h'"
 
-#DFA GUI CONSTANTS
+# dfa gui constants
 BUTTON_HEIGHT = 2
 WIN_SIZE = W = H =  700
 
-#TRACKING GUI CONSTANTS
+# tracking/gui constants
 maxlen = 10   
 LINE_RED = (0, 0, 255) #actually not red tho ;p
 LINE_GREEN = (0, 255, 0)
 LINE_THICKNESS = 64
 
-import os
-import os.path
-from pathlib import Path
-
-
-#file locations
+# file locations
 folderPath = os.path.join(Path.home(),"2048Vision")
 filePath = os.path.join(folderPath, "data")
 
-#color tracking
+# color tracking
 color_presets = {
     "orangeLower": (0, 100, 100),
     "orangeUpper": (25, 255, 255),
@@ -94,4 +91,3 @@ color_presets = {
     "greenLower":(40, 80, 80),
     "greenUpper":(100, 255, 171),
 }
-
