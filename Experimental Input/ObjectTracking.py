@@ -1,7 +1,6 @@
 import imutils
 from imutils.video import VideoStream
 from cv2 import cv2
-import datetime
 import time
 
 TRACKERTYPE = "kcf"
