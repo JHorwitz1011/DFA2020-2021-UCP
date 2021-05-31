@@ -30,7 +30,6 @@ class RightView(tk.Frame):
         #color data
         self.selected_color = tk.StringVar()    #Tkinter needs this variable type for the buttons, seems to be an enum type
  
-        print("selected", self.selected_color)
         self.orange_button = tk.Radiobutton(self.selection_frame, text='      ', value='orange',
                                             command=self.button_callback, bg='orange', variable = self.selected_color, height = c.BUTTON_HEIGHT )
         self.orange_button.pack(side = tk.LEFT)
@@ -96,11 +95,11 @@ class RightView(tk.Frame):
             dataFile['threshold'] = cfg.threshold
             #dataFile['color'] = 'blue'         ###############################################
 
-        print('slider callback works', value, self)
+        # print('slider callback works', value, self)
 
     def button_callback(self):
         #string manipulation with a dictionary to get around having a large amount of callback methods
-        print('button callback')
+        #print('button callback')
         cfg.colorUpper = c.color_presets[self.selected_color.get() + "Upper"]
         cfg.colorLower = c.color_presets[self.selected_color.get() + "Lower"]
         with shelve.open(c.filePath) as dataFile:
