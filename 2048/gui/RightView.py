@@ -51,18 +51,7 @@ class RightView(tk.Frame):
         self.green_button.pack(side = tk.LEFT)
         
         self.selected_color.set(cfg.color)
-
-        #shabby way to integrate color selection on start
-        if self.selected_color.get() == 'orange':
-            self.selected_color.set('orange')
-        elif self.selected_color.get() == 'green':
-            self.selected_color.set('green')
-        elif self.selected_color.get() == 'magenta':
-            self.selected_color.set('magenta')
-        elif self.selected_color.get() == 'yellow':
-            self.selected_color.set('yellow')
-        elif self.selected_color.get() == 'blue':
-            self.selected_color.set('blue')
+        self.button_callback()
 
         self.slider = tk.Scale(self.selection_frame, bg = c.BACKGROUND_COLOR_APP, highlightbackground = c.BACKGROUND_COLOR_APP ,from_=50, to_=250, command=self.slider_callback, orient = tk.HORIZONTAL, length = 200, width = 25, fg='white' )
         self.slider.set(cfg.threshold)
@@ -111,6 +100,7 @@ class RightView(tk.Frame):
 
     def button_callback(self):
         #string manipulation with a dictionary to get around having a large amount of callback methods
+        print('button callback')
         cfg.colorUpper = c.color_presets[self.selected_color.get() + "Upper"]
         cfg.colorLower = c.color_presets[self.selected_color.get() + "Lower"]
         with shelve.open(c.filePath) as dataFile:
