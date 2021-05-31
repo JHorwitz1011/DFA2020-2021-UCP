@@ -70,9 +70,29 @@ def detect_color(img, points):
                     press(True, key='s')
             else:
                     press(False)
-
+    drawLine(img)
 
         # loop over the set of tracked points
+#     for i in range(1, len(cfg.pts)):
+#             # if either of the tracked points are None, ignore
+#             # them
+#             if cfg.pts[i - 1] is None or cfg.pts[i] is None:
+#                     continue
+#             # otherwise, compute the thickness of the line and
+#             # draw the connecting lines
+#             thickness = int(np.sqrt(c.LINE_THICKNESS/ float(i + 1)) * 2.5)
+#             if cfg.last_input or cfg.cooldown > 0:
+#                     cv2.line(img, cfg.pts[i - 1], cfg.pts[i], c.LINE_GREEN, thickness)
+#                     if cfg.cooldown > 0:
+#                             cfg.cooldown -= 1
+#             else:
+#                     cv2.line(img, cfg.pts[i - 1], cfg.pts[i], c.LINE_RED, thickness)
+
+    img = cv2.flip(img, 1)
+    return img
+
+
+def drawLine(img):
     for i in range(1, len(cfg.pts)):
             # if either of the tracked points are None, ignore
             # them
@@ -87,6 +107,35 @@ def detect_color(img, points):
                             cfg.cooldown -= 1
             else:
                     cv2.line(img, cfg.pts[i - 1], cfg.pts[i], c.LINE_RED, thickness)
+    return img
 
-    img = cv2.flip(img, 1)
+
+def detect_aruco(img):
+    global up_frames, down_frames, left_frames, right_frames
+
+    arucoDict = cv2.aruco.Dictionary_get(c.ARUCO_DICT[c.TAG_TYPE])
+    arucoParams = cv2.aruco.DetectorParameters_create()
+
+    (corners, ids, rejected) = cv2.aruco.detectMarkers(img, arucoDict, parameters = arucoParams)
+    cv2.aruco.drawDetectedMarkers(img,corners,ids,(0,255,0))
+    
+    img = cv2.flip(img, 1) 
+
+    if len(corners) > 0:
+        img = cv2.flip(img, 1) 
+        ids = ids.flatten()
+
+        for (markerCorner, markerID) in zip(corners, ids):
+            corners = markerCorner.reshape((4,2))
+            (topLeft, topRight, bottomRight, bottomLeft) = corners
+
+            topRight = (int(topRight[0]), int(topRight[1]))
+            bottomRight = (int(bottomRight[0]), int(bottomRight[1]))
+            bottomLeft = (int(bottomLeft[0]), int(bottomLeft[1]))
+            topLeft = (int(topLeft[0]), int(topLeft[1]))
+            
+            # compute and draw the center (x, y)-coordinates of the ArUco marker
+            cX = int((topLeft[0] + bottomRight[0]) / 2.0)
+            cY = int((topLeft[1] + bottomRight[1]) / 2.0)
+            
     return img

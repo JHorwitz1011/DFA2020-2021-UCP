@@ -4,7 +4,7 @@
 # Pyinstaller
 **/build/
 **/dist/
-2048/BallTrackingThreading.spec
+*.spec
 
 # Pycache
 **/2048/gui/__pycache__
