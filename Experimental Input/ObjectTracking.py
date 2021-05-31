@@ -4,7 +4,7 @@ from cv2 import cv2
 import datetime
 import time
 
-TRACKERTYPE = "csrt"
+TRACKERTYPE = "kcf"
 WINDOW_SIZE = 1000
 
 OPENCV_OBJECT_TRACKERS = {
