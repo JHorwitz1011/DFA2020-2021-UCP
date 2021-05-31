@@ -59,6 +59,14 @@ def detect_color(img, points):
     # update the points queue
     cfg.pts.appendleft(center)
 
+    checkKeyPress()
+
+    drawLine(img)
+
+    img = cv2.flip(img, 1)
+    return img
+
+def checkKeyPress():
     if((len(cfg.pts) == c.maxlen) and cfg.pts[(c.maxlen) - 1] is not None and cfg.pts[0] is not None):
         xdif = cfg.pts[c.maxlen-1][0] - cfg.pts[0][0]
         ydif = cfg.pts[c.maxlen-1][1] - cfg.pts[0][1]
@@ -73,11 +81,6 @@ def detect_color(img, points):
             press(True, key='s')
         else:
             press(False)
-
-    drawLine(img)
-
-    img = cv2.flip(img, 1)
-    return img
 
 
 def drawLine(img):
@@ -99,20 +102,16 @@ def drawLine(img):
     return img
 
 
-def detect_aruco(img):
+def detect_aruco(img, points):
     global up_frames, down_frames, left_frames, right_frames
 
     arucoDict = cv2.aruco.Dictionary_get(c.ARUCO_DICT[c.TAG_TYPE])
     arucoParams = cv2.aruco.DetectorParameters_create()
 
-    (corners, ids, rejected) = cv2.aruco.detectMarkers(
-        img, arucoDict, parameters=arucoParams)
+    (corners, ids, rejected) = cv2.aruco.detectMarkers(img, arucoDict, parameters=arucoParams)
     cv2.aruco.drawDetectedMarkers(img, corners, ids, (0, 255, 0))
 
-    img = cv2.flip(img, 1)
-
     if len(corners) > 0:
-        img = cv2.flip(img, 1)
         ids = ids.flatten()
 
         for (markerCorner, markerID) in zip(corners, ids):
@@ -127,5 +126,13 @@ def detect_aruco(img):
             # compute and draw the center (x, y)-coordinates of the ArUco marker
             cX = int((topLeft[0] + bottomRight[0]) / 2.0)
             cY = int((topLeft[1] + bottomRight[1]) / 2.0)
+            center = (cX, cY)
 
+        cfg.pts.appendleft(center)
+
+    checkKeyPress()
+
+    drawLine(img)
+
+    img = cv2.flip(img, 1)
     return img
