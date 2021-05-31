@@ -57,8 +57,7 @@ class Wrapper:
 
                 cfg.threshold = dataFile['threshold']
                 cfg.color = dataFile['color']
-                print(cfg.color)
-
+    
     def on_gui_closing(self):
         #saving
         logic.save_game(self.app_gui.left_view.matrix, cfg.highScore, cfg.currentScore)
