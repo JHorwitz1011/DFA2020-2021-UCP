@@ -224,10 +224,6 @@ def right(game):
     return game, done
 
 
-# Scoring
-def getCurrentScore():
-    return cfg.currentScore
-
 #Saving
 def save_game(matrix, hi_score, current_score):
     with shelve.open(c.filePath) as dataFile:
