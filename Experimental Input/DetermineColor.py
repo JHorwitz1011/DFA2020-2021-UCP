@@ -44,7 +44,6 @@ while True:
         hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)        
 
         [height, width, channels] = roi.shape
-        print(height, "  ",width)
 
         hue = []
         sat = []
