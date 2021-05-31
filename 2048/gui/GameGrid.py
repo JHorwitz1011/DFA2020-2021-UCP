@@ -37,7 +37,6 @@ class GameGrid(tk.Frame):
         #self.mainloop()
     # Restart
     def restart(self):
-        print("current score on restart:", cfg.currentScore)
         cfg.currentScore = 0
         RightView.setCurrentScore(cfg.wrapper.app_gui.right_view, cfg.currentScore)
 
@@ -82,7 +81,6 @@ class GameGrid(tk.Frame):
         if key == c.KEY_BACK and len(self.history_matrixs) > 1:
             self.matrix = self.history_matrixs.pop()
             self.update_grid_cells()
-            print('back on step total step:', len(self.history_matrixs))
         elif key in self.commands:
             self.matrix, done = self.commands[repr(event.char)](self.matrix)
             if done:
