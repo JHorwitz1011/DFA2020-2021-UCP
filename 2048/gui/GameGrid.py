@@ -37,6 +37,7 @@ class GameGrid(tk.Frame):
         #self.mainloop()
     # Restart
     def restart(self):
+        print("current score on restart:", cfg.currentScore)
         cfg.currentScore = 0
         RightView.setCurrentScore(cfg.wrapper.app_gui.right_view, cfg.currentScore)
 
@@ -97,7 +98,6 @@ class GameGrid(tk.Frame):
                     self.grid_cells[1][2].configure(text="Again!", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
 
         # Scoring: runs even after loss or win
-        cfg.currentScore = logic.getCurrentScore()
         RightView.setCurrentScore(cfg.wrapper.app_gui.right_view, cfg.currentScore)
         if(cfg.currentScore > cfg.highScore):
             cfg.highScore = cfg.currentScore

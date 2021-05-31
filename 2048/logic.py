@@ -8,16 +8,13 @@
 import random
 
 import vars.constants as c
+import vars.config as cfg
 from playsound import playsound
 from pathlib import Path
 import os.path  
 import shelve
 
 tileSound = os.path.join(Path().absolute(),'sounds','CSharp.wav')
-
-
-# Scoring
-score = 0
 
 #######
 # Task 1a #
@@ -38,8 +35,7 @@ def new_game(n):
     matrix = add_two(matrix)
 
     #Scoring
-    global score
-    score = 0
+    cfg.currentScore = 0
     return matrix
 
 ###########
@@ -181,8 +177,7 @@ def merge(mat, done):
                 mat[i][j+1] = 0
 
                 #Scoring: adds merged tile value
-                global score
-                score += mat[i][j]
+                cfg.currentScore += mat[i][j]
                 
                 playsound(tileSound, block = False)
                 done = True
@@ -231,8 +226,7 @@ def right(game):
 
 # Scoring
 def getCurrentScore():
-    global score
-    return score
+    return cfg.currentScore
 
 #Saving
 def save_game(matrix, hi_score, current_score):
