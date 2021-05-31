@@ -70,29 +70,15 @@ def detect_color(img, points):
                     press(True, key='s')
             else:
                     press(False)
+                    
     drawLine(img)
-
-        # loop over the set of tracked points
-#     for i in range(1, len(cfg.pts)):
-#             # if either of the tracked points are None, ignore
-#             # them
-#             if cfg.pts[i - 1] is None or cfg.pts[i] is None:
-#                     continue
-#             # otherwise, compute the thickness of the line and
-#             # draw the connecting lines
-#             thickness = int(np.sqrt(c.LINE_THICKNESS/ float(i + 1)) * 2.5)
-#             if cfg.last_input or cfg.cooldown > 0:
-#                     cv2.line(img, cfg.pts[i - 1], cfg.pts[i], c.LINE_GREEN, thickness)
-#                     if cfg.cooldown > 0:
-#                             cfg.cooldown -= 1
-#             else:
-#                     cv2.line(img, cfg.pts[i - 1], cfg.pts[i], c.LINE_RED, thickness)
 
     img = cv2.flip(img, 1)
     return img
 
 
 def drawLine(img):
+    # loop over the set of tracked points
     for i in range(1, len(cfg.pts)):
             # if either of the tracked points are None, ignore
             # them
