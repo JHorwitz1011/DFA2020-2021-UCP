@@ -1,7 +1,3 @@
-import logic
-import puzzle
-import vars.config as cfg
-import vars.constants as c
 import tkinter as tk
 
 class LeftView(tk.Frame):
