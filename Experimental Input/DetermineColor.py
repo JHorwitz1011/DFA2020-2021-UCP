@@ -33,11 +33,7 @@ while True:
     frame = imutils.resize(frame, width = WINDOW_SIZE)
     (H, W) = frame.shape[:2]
 
-    if initialBoundingBox is not None:
-        topLeft = (initialBoundingBox[2], initialBoundingBox[3])
-        bottomRight = (initialBoundingBox[0], initialBoundingBox[1])
-
-        
+    if initialBoundingBox is not None:        
         roi = frame[int(initialBoundingBox[1]):int(initialBoundingBox[1]+initialBoundingBox[3]), 
                     int(initialBoundingBox[0]):int(initialBoundingBox[0]+initialBoundingBox[2])]
 
