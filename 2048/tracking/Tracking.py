@@ -16,8 +16,8 @@ def press(input, key='a'):
 def detect_color(img, points):
     #img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
     
-    if cfg.cooldown > 0:
-        print(cfg.cooldown)
+#     if cfg.cooldown > 0:
+#         print(cfg.cooldown)
    
     # resize the img, blur it, and convert it to the HSV
     # color space
@@ -57,12 +57,9 @@ def detect_color(img, points):
     cfg.pts.appendleft(center)
 
     if( (len(cfg.pts) == c.maxlen) and cfg.pts[(c.maxlen) - 1] is not None and cfg.pts[0] is not None):
-            #print('left:', pts[0])
-            #print('right:', pts[maxlen-1])
             xdif = cfg.pts[c.maxlen-1][0] - cfg.pts[0][0]
-            #print('xdif:', xdif)
             ydif = cfg.pts[c.maxlen-1][1] - cfg.pts[0][1]
-            #print('ydif:', ydif)
+
             if xdif > cfg.threshold:
                     press(True, key='d')
             elif xdif < -1 * cfg.threshold:
@@ -92,12 +89,4 @@ def detect_color(img, points):
                     cv2.line(img, cfg.pts[i - 1], cfg.pts[i], c.LINE_RED, thickness)
 
     img = cv2.flip(img, 1)
-
-    #Adjust Framerate
-    #frameRate = 1 / (time.time() - timeCheck) 
-    #print(frameRate)
-    #if(frameRate >30):
-    #    delayFrame = True   
-
-
     return img
