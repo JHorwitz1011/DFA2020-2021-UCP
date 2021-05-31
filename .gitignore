@@ -7,6 +7,6 @@
 2048/BallTrackingThreading.spec
 
 # Pycache
-**/gui/__pycache__
-**/tracking/__pycache__
-**/vars/__pycache__
+**/2048/gui/__pycache__
+**/2048/tracking/__pycache__
+**/2048/vars/__pycache__
