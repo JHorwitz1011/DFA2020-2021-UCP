@@ -1,8 +1,20 @@
-from queue import Queue
-from WebcamThread import WebcamThread
+import queue
+from gui.AppGui import AppGui
+from tracking.WebcamThread import WebcamThread
+import shelve
+import os
+import vars.constants as c
+import vars.config as cfg
+import logic
+import cv2
 
 class Wrapper:
     def __init__(self):
+
+         #Data storage initiate first so GUI created with correct values
+        self.init_data()
+
+
         self.app_gui = AppGui()
         
         #create a Video camera instance
@@ -13,11 +25,10 @@ class Wrapper:
         
         #create a queue to fetch and execute callbacks passed 
         #from background thread
-        self.frame_queue = Queue()
-        self.input_queue = Queue()
-
+        self.callback_queue = queue.Queue()
+        
         #create a thread to fetch webcam feed video
-        self.webcam_thread = WebcamThread(self.app_gui, self.frame_queue)
+        self.webcam_thread = WebcamThread(self.app_gui, self.callback_queue)
         
         #save attempts made to fetch webcam video in case of failure 
         self.webcam_attempts = 0
@@ -31,7 +42,26 @@ class Wrapper:
         #start fetching video
         self.fetch_webcam_video()
     
+    def init_data(self):
+
+        if(not os.path.exists(c.folderPath)):
+            os.makedirs(c.folderPath)
+        
+        if (not len(os.listdir(c.folderPath)) == 0):    
+            with shelve.open(c.filePath, 'c') as dataFile:
+           
+                if not dataFile.keys().__contains__('color'):
+                    dataFile['color'] = cfg.color
+                if not dataFile.keys().__contains__('threshold'):
+                    dataFile['threshold'] = cfg.threshold
+
+                cfg.threshold = dataFile['threshold']
+                cfg.color = dataFile['color']
+    
     def on_gui_closing(self):
+        #saving
+        logic.save_game(self.app_gui.left_view.matrix, cfg.highScore, cfg.currentScore)
+
         self.webcam_attempts = 51
         self.webcam_thread.stop()
         self.webcam_thread.join()
@@ -87,3 +117,4 @@ class Wrapper:
         
     def __del__(self):
         print('Done')#EDIT self.webcam_thread.stop()
+

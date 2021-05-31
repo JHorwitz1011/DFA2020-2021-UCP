@@ -1,3 +1,9 @@
+import os
+import cv2
+from pathlib import Path
+
+
+#GUI CONFIGURATION
 SIZE = 400
 GRID_LEN = 4
 GRID_PADDING = 10
@@ -59,3 +65,57 @@ KEY_J = "'j'"
 KEY_K = "'k'"
 KEY_L = "'l'"
 KEY_H = "'h'"
+
+# dfa gui constants
+BUTTON_HEIGHT = 2
+WIN_SIZE = W = H =  700
+
+# tracking/gui constants
+maxlen = 10   
+LINE_RED = (0, 0, 255) #actually not red tho ;p
+LINE_GREEN = (0, 255, 0)
+LINE_THICKNESS = 64
+
+# file locations
+folderPath = os.path.join(Path.home(),"2048Vision")
+filePath = os.path.join(folderPath, "data")
+
+# color tracking
+color_presets = {
+    "orangeLower": (0, 100, 100),
+    "orangeUpper": (25, 255, 255),
+    "yellowLower": (0, 70, 190),
+    "yellowUpper": (85, 255, 255),
+    "blueLower": (90,200, 0),
+    "blueUpper": (115, 255, 255),
+    "magentaLower": (87 ,132,136),
+    "magentaUpper":(179,255,255),
+    "greenLower":(40, 80, 80),
+    "greenUpper":(100, 255, 171),
+}
+
+ARUCO_DICT = {
+    "DICT_4X4_50": cv2.aruco.DICT_4X4_50,
+    "DICT_4X4_100": cv2.aruco.DICT_4X4_100,
+    "DICT_4X4_250": cv2.aruco.DICT_4X4_250,
+    "DICT_4X4_1000": cv2.aruco.DICT_4X4_1000,
+    "DICT_5X5_50": cv2.aruco.DICT_5X5_50,
+    "DICT_5X5_100": cv2.aruco.DICT_5X5_100,
+    "DICT_5X5_250": cv2.aruco.DICT_5X5_250,
+    "DICT_5X5_1000": cv2.aruco.DICT_5X5_1000,
+    "DICT_6X6_50": cv2.aruco.DICT_6X6_50,
+    "DICT_6X6_100": cv2.aruco.DICT_6X6_100,
+    "DICT_6X6_250": cv2.aruco.DICT_6X6_250,
+    "DICT_6X6_1000": cv2.aruco.DICT_6X6_1000,
+    "DICT_7X7_50": cv2.aruco.DICT_7X7_50,
+    "DICT_7X7_100": cv2.aruco.DICT_7X7_100,
+    "DICT_7X7_250": cv2.aruco.DICT_7X7_250,
+    "DICT_7X7_1000": cv2.aruco.DICT_7X7_1000,
+    "DICT_ARUCO_ORIGINAL": cv2.aruco.DICT_ARUCO_ORIGINAL,
+    "DICT_APRILTAG_16h5": cv2.aruco.DICT_APRILTAG_16h5,
+    "DICT_APRILTAG_25h9": cv2.aruco.DICT_APRILTAG_25h9,
+    "DICT_APRILTAG_36h10": cv2.aruco.DICT_APRILTAG_36h10,
+    "DICT_APRILTAG_36h11": cv2.aruco.DICT_APRILTAG_36h11
+}
+
+TAG_TYPE = "DICT_ARUCO_ORIGINAL"
