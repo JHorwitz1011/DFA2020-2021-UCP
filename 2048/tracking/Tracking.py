@@ -84,8 +84,7 @@ def detect_color(img, points):
     # construct a mask for the color "green", then perform
     # a series of dilations and erosions to remove any small
     # blobs left in the mask
-    print("colorlower:", cfg.colorLower, "colorhigher:", cfg.colorUpper)
-    print(type(cfg.colorLower[0]), type(cfg.colorUpper[0]))
+
     mask = cv2.inRange(hsv, cfg.colorLower, cfg.colorUpper)
     mask = cv2.erode(mask, None, iterations=2)
     mask = cv2.dilate(mask, None, iterations=2)
