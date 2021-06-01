@@ -60,8 +60,8 @@ def auto_range():
             vMaxValue = max(val, key = val.count)
 
             # calculate upper/lower bounds
-            upperBound = (int(hMaxValue + c.PLUS_MINUS), int(sMaxValue + c.PLUS_MINUS), int(vMaxValue + c.PLUS_MINUS))
-            lowerBound = (int(hMaxValue - c.PLUS_MINUS), int(sMaxValue - c.PLUS_MINUS), int(vMaxValue - c.PLUS_MINUS))
+            upperBound = (int(hMaxValue + c.PLUS_MINUS), int(sMaxValue + 2*c.PLUS_MINUS), int(vMaxValue + 3*c.PLUS_MINUS))
+            lowerBound = (int(hMaxValue - c.PLUS_MINUS), int(sMaxValue - 2*c.PLUS_MINUS), int(vMaxValue - 3*c.PLUS_MINUS))
             
             print("BOUNDS:", lowerBound,"  ", upperBound)
 
@@ -108,9 +108,10 @@ def detect_color(img, points):
         if radius > 10:
             # draw the circle and centroid on the img,
             # then update the list of tracked points
-            cv2.circle(img, (int(x), int(y)), int(radius),
-                       (0, 255, 255), 2)
-            cv2.circle(img, center, 5, (0, 0, 255), -1)
+            #cv2.circle(img, (int(x), int(y)), int(radius),
+            #           (0, 255, 255), 2)
+            #cv2.circle(img, center, 5, (0, 0, 255), -1)
+            pass
     # update the points queue
     cfg.pts.appendleft(center)
 
