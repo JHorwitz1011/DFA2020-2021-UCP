@@ -1,7 +1,7 @@
 import threading
 from tracking.VideoCamera import VideoCamera
 from tracking.Tracking import *
-
+import vars.config as cfg
 class WebcamThread(threading.Thread):
     def __init__(self, app_gui, callback_queue):
         #call super class (Thread) constructor
@@ -56,6 +56,14 @@ class WebcamThread(threading.Thread):
         #app_gui.update_webcam_output(current_frame)
         #face = detect_face(current_frame)
         #EDIT
+        if cfg.recalibrate:
+            cfg.recalibrate = False
+            converted = cv2.cvtColor(current_frame, cv2.COLOR_BGR2RGB)
+            converted = cv2.flip(converted, 1)
+            c.color_presets['yellowLower'], c.color_presets['yellowUpper'] =roi_range(converted)
+            cfg.colorLower = c.color_presets['yellowLower']
+            cfg.colorUpper = c.color_presets['yellowUpper']
+
         face = detect_color(current_frame, cfg.pts)
         app_gui.update_neural_network_output(face)
         

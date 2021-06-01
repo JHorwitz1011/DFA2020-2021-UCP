@@ -3,7 +3,9 @@ import vars.constants as c
 import vars.config as cfg
 #from gui.GameGrid import *
 import shelve
+import cv2
 
+from tracking.Tracking import auto_range
 class RightView(tk.Frame):
     def __init__(self, root):
         #call super class (Frame) constructor
@@ -63,6 +65,10 @@ class RightView(tk.Frame):
         self.restart = tk.Button(self.selection_frame, text ="Restart", command = self.restartCallback)
         self.restart.pack(side = tk.LEFT)
 
+        # Calibrate 
+        self.calibrate = tk.Button(self.selection_frame, text ="Calibrate", command = self.calibrateCallback)
+        self.calibrate.pack(side = tk.LEFT)
+
 
         # Scoring
 
@@ -86,7 +92,8 @@ class RightView(tk.Frame):
         from gui.GameGrid import GameGrid
         GameGrid.restart(cfg.wrapper.app_gui.left_view)
 
-
+    def calibrateCallback(self):
+        cfg.recalibrate = True
 
     def slider_callback(self, value):
         cfg.threshold = int(value)
