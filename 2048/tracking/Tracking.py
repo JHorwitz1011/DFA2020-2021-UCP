@@ -84,7 +84,7 @@ def detect_color(img, points):
     # color space
     img = imutils.resize(img, width=600)
     blurred = cv2.GaussianBlur(img, (11, 11), 0)
-    hsv = cv2.cvtColor(blurred, cv2.COLOR_RGB2HSV) #TODO why is this a RGB conversion 
+    hsv = cv2.cvtColor(blurred, cv2.COLOR_RGB2HSV) #Image in RGB to display, convert to HSV for processing
     # construct a mask for the color "green", then perform
     # a series of dilations and erosions to remove any small
     # blobs left in the mask

@@ -58,7 +58,7 @@ class WebcamThread(threading.Thread):
         #EDIT
         if cfg.recalibrate:
             cfg.recalibrate = False
-            converted = cv2.cvtColor(current_frame, cv2.COLOR_BGR2RGB)
+            converted = cv2.cvtColor(current_frame, cv2.COLOR_BGR2RGB) #Image taken from webcam in BGR
             converted = cv2.flip(converted, 1)
             c.color_presets['yellowLower'], c.color_presets['yellowUpper'] =roi_range(converted)
             cfg.colorLower = c.color_presets['yellowLower']
