@@ -18,3 +18,6 @@ last_input = False           # tracks last input (ex left, right, up, down)
 
 # GUI manipulation
 wrapper = None               # pointer for the wrapper object - needs to be accessed over multiple files.
+
+# Recalibration
+recalibrate = False

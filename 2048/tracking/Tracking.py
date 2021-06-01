@@ -31,45 +31,49 @@ def auto_range():
         key = cv2.waitKey(1) & 0xFF
 
         if key == ord("s"):
-            initialBoundingBox = cv2.selectROI("Frame", frame, fromCenter = False, showCrosshair = True)
-            # crop original frame
-            roi = frame[int(initialBoundingBox[1]):int(initialBoundingBox[1]+initialBoundingBox[3]), 
-            int(initialBoundingBox[0]):int(initialBoundingBox[0]+initialBoundingBox[2])]
-
-            # convert to hsv
-            hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)        
-
-            # get a height and width
-            (height, width, channels) = roi.shape
-
-            hue = []
-            sat = []
-            val = []
-
-            #parse hsv values
-            for y in range(height):
-                for x in range(width):
-                    (h,s,v) = hsv[y,x]
-                    hue.append(h)
-                    sat.append(s)
-                    val.append(v)
-            
-            # determine max
-            hMaxValue = max(hue, key = hue.count)
-            sMaxValue = max(sat, key = sat.count)
-            vMaxValue = max(val, key = val.count)
-
-            # calculate upper/lower bounds
-            upperBound = (int(hMaxValue + c.PLUS_MINUS), int(sMaxValue + 2*c.PLUS_MINUS), int(vMaxValue + 3*c.PLUS_MINUS))
-            lowerBound = (int(hMaxValue - c.PLUS_MINUS), int(sMaxValue - 2*c.PLUS_MINUS), int(vMaxValue - 3*c.PLUS_MINUS))
-            
-            print("BOUNDS:", lowerBound,"  ", upperBound)
+            lowerBound, upperBound = roi_range(frame)
 
             vs.stop()
-            cv2.destroyAllWindows()
-            return lowerBound, upperBound            
+            return lowerBound, upperBound  
+                      
+# Expects frame to be in HSV color space
+def roi_range(frame):
+    initialBoundingBox = cv2.selectROI("Frame", frame, fromCenter = False, showCrosshair = True)
+    # crop original frame
+    roi = frame[int(initialBoundingBox[1]):int(initialBoundingBox[1]+initialBoundingBox[3]), 
+    int(initialBoundingBox[0]):int(initialBoundingBox[0]+initialBoundingBox[2])]
 
+    # convert to hsv
+    hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)        
 
+    # get a height and width
+    (height, width, channels) = roi.shape
+
+    hue = []
+    sat = []
+    val = []
+
+    #parse hsv values
+    for y in range(0, height, 4):
+        for x in range(0, width, 4):
+            (h,s,v) = hsv[y,x]
+            hue.append(h)
+            sat.append(s)
+            val.append(v)
+    
+    # determine max
+    hMaxValue = max(hue, key = hue.count)
+    sMaxValue = max(sat, key = sat.count)
+    vMaxValue = max(val, key = val.count)
+
+    # calculate upper/lower bounds
+    upperBound = (int(hMaxValue + c.PLUS_MINUS), int(sMaxValue + 2*c.PLUS_MINUS), int(vMaxValue + 3*c.PLUS_MINUS))
+    lowerBound = (int(hMaxValue - c.PLUS_MINUS), int(sMaxValue - 2*c.PLUS_MINUS), int(vMaxValue - 3*c.PLUS_MINUS))
+    
+    print("BOUNDS:", lowerBound,"  ", upperBound)
+    cv2.destroyAllWindows()
+    return lowerBound, upperBound  
+    
 def detect_color(img, points):
     #img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
@@ -80,7 +84,7 @@ def detect_color(img, points):
     # color space
     img = imutils.resize(img, width=600)
     blurred = cv2.GaussianBlur(img, (11, 11), 0)
-    hsv = cv2.cvtColor(blurred, cv2.COLOR_RGB2HSV)
+    hsv = cv2.cvtColor(blurred, cv2.COLOR_RGB2HSV) #TODO why is this a RGB conversion 
     # construct a mask for the color "green", then perform
     # a series of dilations and erosions to remove any small
     # blobs left in the mask
