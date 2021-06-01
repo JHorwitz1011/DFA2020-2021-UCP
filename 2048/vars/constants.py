@@ -86,14 +86,15 @@ color_presets = {
     "orangeUpper": (25, 255, 255),
     "yellowLower": (0, 70, 190),
     "yellowUpper": (85, 255, 255),
-    "blueLower": (90,200, 0),
-    "blueUpper": (115, 255, 255),
-    "magentaLower": (87 ,132,136),
+    "blueLower":   (90,200, 0),
+    "blueUpper":   (115, 255, 255),
+    "magentaLower":(87 ,132,136),
     "magentaUpper":(179,255,255),
-    "greenLower":(40, 80, 80),
-    "greenUpper":(100, 255, 171),
+    "greenLower":  (40, 80, 80),
+    "greenUpper":  (100, 255, 171)
 }
 
+# aruco
 ARUCO_DICT = {
     "DICT_4X4_50": cv2.aruco.DICT_4X4_50,
     "DICT_4X4_100": cv2.aruco.DICT_4X4_100,
@@ -119,3 +120,6 @@ ARUCO_DICT = {
 }
 
 TAG_TYPE = "DICT_ARUCO_ORIGINAL"
+
+# auto ranging
+PLUS_MINUS = 7

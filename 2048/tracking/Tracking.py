@@ -4,7 +4,8 @@ import cv2
 import imutils
 import numpy as np
 import keyboard
-
+import time
+from imutils.video import VideoStream
 
 def press(input, key='a'):
     if input and not cfg.last_input:
@@ -14,6 +15,59 @@ def press(input, key='a'):
 
 # EDIT
 # function to detect Aruco with OpenCV
+
+def auto_range():
+    initialBoundingBox = None
+    vs = VideoStream(src=0).start()
+    time.sleep(1.0)
+
+    while True:
+
+        frame = vs.read()
+        frame = imutils.resize(frame, width = c.WIN_SIZE)
+
+        #display frame
+        cv2.imshow("Frame", frame)
+        key = cv2.waitKey(1) & 0xFF
+
+        if key == ord("s"):
+            initialBoundingBox = cv2.selectROI("Frame", frame, fromCenter = False, showCrosshair = True)
+            # crop original frame
+            roi = frame[int(initialBoundingBox[1]):int(initialBoundingBox[1]+initialBoundingBox[3]), 
+            int(initialBoundingBox[0]):int(initialBoundingBox[0]+initialBoundingBox[2])]
+
+            # convert to hsv
+            hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)        
+
+            # get a height and width
+            (height, width, channels) = roi.shape
+
+            hue = []
+            sat = []
+            val = []
+
+            #parse hsv values
+            for y in range(height):
+                for x in range(width):
+                    (h,s,v) = hsv[y,x]
+                    hue.append(h)
+                    sat.append(s)
+                    val.append(v)
+            
+            # determine max
+            hMaxValue = max(hue, key = hue.count)
+            sMaxValue = max(sat, key = sat.count)
+            vMaxValue = max(val, key = val.count)
+
+            # calculate upper/lower bounds
+            upperBound = (int(hMaxValue + c.PLUS_MINUS), int(sMaxValue + c.PLUS_MINUS), int(vMaxValue + c.PLUS_MINUS))
+            lowerBound = (int(hMaxValue - c.PLUS_MINUS), int(sMaxValue - c.PLUS_MINUS), int(vMaxValue - c.PLUS_MINUS))
+            
+            print("BOUNDS:", lowerBound,"  ", upperBound)
+
+            vs.stop()
+            cv2.destroyAllWindows()
+            return lowerBound, upperBound            
 
 
 def detect_color(img, points):
@@ -30,6 +84,8 @@ def detect_color(img, points):
     # construct a mask for the color "green", then perform
     # a series of dilations and erosions to remove any small
     # blobs left in the mask
+    print("colorlower:", cfg.colorLower, "colorhigher:", cfg.colorUpper)
+    print(type(cfg.colorLower[0]), type(cfg.colorUpper[0]))
     mask = cv2.inRange(hsv, cfg.colorLower, cfg.colorUpper)
     mask = cv2.erode(mask, None, iterations=2)
     mask = cv2.dilate(mask, None, iterations=2)
