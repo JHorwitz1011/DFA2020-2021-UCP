@@ -22,11 +22,11 @@ def auto_range():
     time.sleep(1.0)
 
     while True:
-
         frame = vs.read()
         frame = imutils.resize(frame, width = c.WIN_SIZE)
 
         #display frame
+        frame = cv2.flip(frame, 1)
         cv2.imshow("Frame", frame)
         key = cv2.waitKey(1) & 0xFF
 
