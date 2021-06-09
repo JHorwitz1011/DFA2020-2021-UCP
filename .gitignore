@@ -5,6 +5,7 @@
 **/build/
 **/dist/
 *.spec
+**/output
 
 # Pycache
 **/2048/gui/__pycache__

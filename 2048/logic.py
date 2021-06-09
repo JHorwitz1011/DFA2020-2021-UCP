@@ -13,9 +13,21 @@ from playsound import playsound
 from pathlib import Path
 import os.path  
 import shelve
+import sys
 
-tileSound = os.path.join(Path().absolute(),'sounds','CSharp.wav')
+#tileSound = os.path.join(Path().absolute(),'sounds','CSharp.wav')
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath("sounds/")
+    
+    return os.path.join(base_path, relative_path)
+
+tileSound = resource_path('CSharp.wav')
 #######
 # Task 1a #
 #######
