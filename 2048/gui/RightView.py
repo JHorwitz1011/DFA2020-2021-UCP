@@ -32,9 +32,9 @@ class RightView(tk.Frame):
         #color data
         self.selected_color = tk.StringVar()    #Tkinter needs this variable type for the buttons, seems to be an enum type
  
-        self.orange_button = tk.Radiobutton(self.selection_frame, text='      ', value='orange',
-                                            command=self.button_callback, bg='orange', variable = self.selected_color, height = c.BUTTON_HEIGHT )
-        self.orange_button.pack(side = tk.LEFT)
+        # self.orange_button = tk.Radiobutton(self.selection_frame, text='      ', value='orange',
+        #                                     command=self.button_callback, bg='orange', variable = self.selected_color, height = c.BUTTON_HEIGHT )
+        # self.orange_button.pack(side = tk.LEFT)
         
         self.blue_button = tk.Radiobutton(self.selection_frame, text='      ',value='blue',
                                             command=self.button_callback, bg='blue',variable = self.selected_color, height = c.BUTTON_HEIGHT )
