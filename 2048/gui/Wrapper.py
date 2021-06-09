@@ -48,15 +48,15 @@ class Wrapper:
             os.makedirs(c.folderPath)
         
         if (not len(os.listdir(c.folderPath)) == 0):    
+
             with shelve.open(c.filePath, 'c') as dataFile:
-           
-                if not dataFile.keys().__contains__('color'):
-                    dataFile['color'] = cfg.color
-                if not dataFile.keys().__contains__('threshold'):
+                if not dataFile.keys().__contains__('bounds'):
+                    dataFile['bounds'] = (0,0)
+                if not dataFile.keys().__contains__('threshold'): #TODO rename to sensitivity or similar 
                     dataFile['threshold'] = cfg.threshold
 
+                cfg.colorLower, cfg.colorUpper = dataFile['bounds']
                 cfg.threshold = dataFile['threshold']
-                cfg.color = dataFile['color']
     
     def on_gui_closing(self):
         #saving

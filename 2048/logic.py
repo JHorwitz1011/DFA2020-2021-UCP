@@ -230,6 +230,7 @@ def save_game(matrix, hi_score, current_score):
         dataFile['state'] = matrix
         dataFile['hi_score'] = hi_score
         dataFile['current_score'] = current_score
+        dataFile['bounds'] = (cfg.colorLower, cfg.colorUpper)
 
 #RETURNS MATRIX, HIGH SCORE, CURRENT SCORE
 def load_game():

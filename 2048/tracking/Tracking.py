@@ -31,7 +31,7 @@ def auto_range():
         key = cv2.waitKey(1) & 0xFF
 
         if key == ord("s"):
-            lowerBound, upperBound = roi_range(frame)
+            lowerBound, upperBound, success = roi_range(frame)
 
             vs.stop()
             return lowerBound, upperBound  
@@ -40,39 +40,44 @@ def auto_range():
 def roi_range(frame):
     initialBoundingBox = cv2.selectROI("Frame", frame, fromCenter = False, showCrosshair = True)
     # crop original frame
-    roi = frame[int(initialBoundingBox[1]):int(initialBoundingBox[1]+initialBoundingBox[3]), 
-    int(initialBoundingBox[0]):int(initialBoundingBox[0]+initialBoundingBox[2])]
-
-    # convert to hsv
-    hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)        
-
-    # get a height and width
-    (height, width, channels) = roi.shape
-
-    hue = []
-    sat = []
-    val = []
-
-    #parse hsv values
-    for y in range(0, height, 4):
-        for x in range(0, width, 4):
-            (h,s,v) = hsv[y,x]
-            hue.append(h)
-            sat.append(s)
-            val.append(v)
     
-    # determine max
-    hMaxValue = max(hue, key = hue.count)
-    sMaxValue = max(sat, key = sat.count)
-    vMaxValue = max(val, key = val.count)
+    roi = frame[int(initialBoundingBox[1]):int(initialBoundingBox[1]+initialBoundingBox[3]), int(initialBoundingBox[0]):int(initialBoundingBox[0]+initialBoundingBox[2])]
+    if len(roi) != 0:
 
-    # calculate upper/lower bounds
-    upperBound = (int(hMaxValue + c.PLUS_MINUS), int(sMaxValue + 2*c.PLUS_MINUS), int(vMaxValue + 3*c.PLUS_MINUS))
-    lowerBound = (int(hMaxValue - c.PLUS_MINUS), int(sMaxValue - 2*c.PLUS_MINUS), int(vMaxValue - 3*c.PLUS_MINUS))
-    
-    print("BOUNDS:", lowerBound,"  ", upperBound)
-    cv2.destroyAllWindows()
-    return lowerBound, upperBound  
+        # convert to hsv
+        hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)        
+        print(type(roi))
+        # get a height and width
+        (height, width, channels) = roi.shape
+
+        hue = []
+        sat = []
+        val = []
+
+        #parse hsv values
+        for y in range(0, height, 4):
+            for x in range(0, width, 4):
+                (h,s,v) = hsv[y,x]
+                hue.append(h)
+                sat.append(s)
+                val.append(v)
+        
+        # determine max
+        hMaxValue = max(hue, key = hue.count)
+        sMaxValue = max(sat, key = sat.count)
+        vMaxValue = max(val, key = val.count)
+
+        # calculate upper/lower bounds
+        upperBound = (int(hMaxValue + c.PLUS_MINUS), int(sMaxValue + 2*c.PLUS_MINUS), int(vMaxValue + 3*c.PLUS_MINUS))
+        lowerBound = (int(hMaxValue - c.PLUS_MINUS), int(sMaxValue - 2*c.PLUS_MINUS), int(vMaxValue - 3*c.PLUS_MINUS))
+        
+        print("BOUNDS:", lowerBound,"  ", upperBound)
+        cv2.destroyAllWindows()
+        return lowerBound, upperBound, True  
+    else:
+        cv2.destroyAllWindows()
+        return 0, 0, False
+        
     
 def detect_color(img, points):
     #img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)

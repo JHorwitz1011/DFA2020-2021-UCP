@@ -60,12 +60,21 @@ class WebcamThread(threading.Thread):
             cfg.recalibrate = False
             converted = cv2.cvtColor(current_frame, cv2.COLOR_BGR2RGB)
             converted = cv2.flip(converted, 1)
-            c.color_presets['yellowLower'], c.color_presets['yellowUpper'] =roi_range(converted)
-            cfg.colorLower = c.color_presets['yellowLower']
-            cfg.colorUpper = c.color_presets['yellowUpper']
+            lower, upper, success = roi_range(converted)
+            if success:
+                # c.color_presets['yellowLower'], c.color_presets['yellowUpper'] = lower, upper
+                # cfg.colorLower = c.color_presets['yellowLower']
+                # cfg.colorUpper = c.color_presets['yellowUpper']
 
-        face = detect_color(current_frame, cfg.pts)
-        app_gui.update_neural_network_output(face)
+                cfg.colorLower = lower
+                cfg.colorUpper = upper
+        if cfg.tracking_enabled:
+            face = detect_color(current_frame, cfg.pts)
+        else:
+            face = imutils.resize(current_frame, width=600)
+            face = cv2.flip(face,1)
+
+        app_gui.display_img_to_gui(face)
         
     def __del__(self):
         self.camera.release()
