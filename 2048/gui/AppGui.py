@@ -74,7 +74,7 @@ class AppGui:
         #pass the image to left_view to update itself
         self.left_view.update_image(image)
         
-    def update_neural_network_output(self, image):
+    def display_img_to_gui(self, image):
         #pre-process image to desired format, height etc.
         image = self.process_image(image)
         #pass the image to right_view to update itself

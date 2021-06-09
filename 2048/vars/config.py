@@ -21,3 +21,6 @@ wrapper = None               # pointer for the wrapper object - needs to be acce
 
 # Recalibration
 recalibrate = False
+
+# pause/play state
+tracking_enabled = True

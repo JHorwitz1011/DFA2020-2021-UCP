@@ -80,19 +80,8 @@ LINE_THICKNESS = 64
 folderPath = os.path.join(Path.home(),"2048Vision")
 filePath = os.path.join(folderPath, "data")
 
-# color tracking
-color_presets = {
-    "orangeLower": (0, 100, 100),
-    "orangeUpper": (25, 255, 255),
-    "yellowLower": (0, 70, 190),
-    "yellowUpper": (85, 255, 255),
-    "blueLower":   (90,200, 0),
-    "blueUpper":   (115, 255, 255),
-    "magentaLower":(87 ,132,136),
-    "magentaUpper":(179,255,255),
-    "greenLower":  (40, 80, 80),
-    "greenUpper":  (100, 255, 171)
-}
+#version control
+version = 0.3
 
 # aruco
 ARUCO_DICT = {
